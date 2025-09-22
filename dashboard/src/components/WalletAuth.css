@@ -1,0 +1,258 @@
+/* src/components/WalletAuth.css */
+.wallet-auth-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.wallet-status {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.wallet-status.connected {
+  color: #00ff88;
+}
+
+.wallet-status.disconnected {
+  color: #ff6b6b;
+}
+
+.wallet-status.error {
+  color: #ffa726;
+}
+
+.status-icon {
+  font-size: 2em;
+  min-width: 40px;
+}
+
+.status-content {
+  flex: 1;
+}
+
+.status-content h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.status-content p {
+  margin: 0 0 12px 0;
+  opacity: 0.9;
+  font-size: 0.9em;
+}
+
+.account-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.account-label {
+  font-size: 0.85em;
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+.account-address {
+  font-family: "Courier New", monospace;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.copy-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  font-size: 0.9em;
+}
+
+.copy-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.connect-button,
+.disconnect-button,
+.install-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  text-align: center;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.connect-button {
+  background: linear-gradient(135deg, #00ff88, #00cc6a);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+}
+
+.connect-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
+  background: linear-gradient(135deg, #00cc6a, #00aa55);
+}
+
+.connect-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.disconnect-button {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+}
+
+.disconnect-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+  background: linear-gradient(135deg, #ee5a5a, #dd4444);
+}
+
+.install-button {
+  background: linear-gradient(135deg, #ffa726, #ff9800);
+  color: white;
+  box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
+}
+
+.install-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 167, 38, 0.4);
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  margin: 8px 0;
+  border-left: 3px solid #ff6b6b;
+}
+
+.wallet-features {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.wallet-features h4 {
+  margin: 0 0 12px 0;
+  color: #00ff88;
+  font-size: 1em;
+}
+
+.wallet-features ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wallet-features li {
+  padding: 4px 0;
+  font-size: 0.9em;
+  opacity: 0.9;
+}
+
+.auth-required {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  color: #ffc107;
+}
+
+.auth-required p {
+  margin: 0;
+  font-size: 0.95em;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .wallet-auth-container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .wallet-status {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .account-details {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .connect-button,
+  .disconnect-button,
+  .install-button {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .wallet-auth-container {
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  }
+
+  .account-address {
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+  }
+}

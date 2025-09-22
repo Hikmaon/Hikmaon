@@ -1,0 +1,72 @@
+// src/auth/routes.rs
+use axum::{
+    extract::State,
+    response::Json,
+    routing::{post, delete},
+    Router,
+    http::StatusCode,
+};
+
+use super::{
+    AuthManager, NonceRequest, NonceResponse, VerifyRequest, VerifyResponse, AuthResponse,
+    signature::recover_address_from_signature,
+};
+
+pub fn auth_routes() -> Router<crate::api::routes::AppState> {
+    Router::new()
+        .route("/auth/nonce", post(generate_nonce))
+        .route("/auth/verify", post(verify_signature))
+        .route("/auth/logout", delete(logout))
+}
+
+async fn generate_nonce(
+    State(state): State<crate::api::routes::AppState>,
+    Json(payload): Json<NonceRequest>,
+) -> Result<Json<NonceResponse>, StatusCode> {
+    let mut auth_manager = state.auth_manager.lock().unwrap();
+    let nonce = auth_manager.generate_nonce(&payload.address);
+    
+    Ok(Json(NonceResponse { nonce }))
+}
+
+async fn verify_signature(
+    State(state): State<crate::api::routes::AppState>,
+    Json(payload): Json<VerifyRequest>,
+) -> Result<Json<VerifyResponse>, StatusCode> {
+    let mut auth_manager = state.auth_manager.lock().unwrap();
+    
+    // Verify the nonce
+    if !auth_manager.verify_nonce(&payload.address, &payload.nonce) {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+    
+    // Verify the signature
+    match recover_address_from_signature(&payload.message, &payload.signature) {
+        Ok(recovered_address) => {
+            // Check if recovered address matches the claimed address
+            if recovered_address.to_lowercase() == payload.address.to_lowercase() {
+                // Create session token
+                let token = auth_manager.create_session(&payload.address);
+                
+                Ok(Json(VerifyResponse {
+                    token,
+                    address: payload.address,
+                }))
+            } else {
+                Err(StatusCode::UNAUTHORIZED)
+            }
+        }
+        Err(_) => Err(StatusCode::BAD_REQUEST),
+    }
+}
+
+async fn logout(
+    State(state): State<crate::api::routes::AppState>,
+) -> Json<AuthResponse> {
+    // In a full implementation, you'd get the token from the Authorization header
+    // and revoke it. For now, just return success.
+    Json(AuthResponse {
+        status: "success".to_string(),
+        message: "Successfully logged out".to_string(),
+    })
+}
