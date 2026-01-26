@@ -1,14 +1,15 @@
 use chrono::prelude::*;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum TransactionType {
     Transfer,        // Transfer tokens
     Reward,          // PoS or PoW reward
     Certificate,     // Issue certificate
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Transaction {
     pub id: String,
     pub from: Option<String>,       // None for rewards
