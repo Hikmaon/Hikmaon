@@ -1,4 +1,4 @@
-// src/api.js - Complete HybridChain API Integration
+// src/api.js - Complete Hikmalayer API Integration
 import axios from "axios";
 
 const API_BASE = "http://127.0.0.1:3000";

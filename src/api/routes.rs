@@ -114,6 +114,8 @@ pub struct BlockchainStats {
     pub difficulty: usize,
     pub is_valid: bool,
     pub latest_hash: String,
+    pub finalized_height: u64,
+    pub finality_depth: u64,
 }
 
 #[derive(Serialize)]
@@ -383,6 +385,8 @@ async fn get_blockchain_stats(State(state): State<AppState>) -> Json<BlockchainS
         difficulty: chain.difficulty,
         is_valid: chain.is_valid(),
         latest_hash: chain.latest_hash(),
+        finalized_height: chain.finalized_height,
+        finality_depth: governance.finality_depth,
     })
 }
 

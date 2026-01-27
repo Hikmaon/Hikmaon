@@ -103,7 +103,7 @@ async fn main() {
         .with_state(app_state)
         .layer(cors);
 
-    println!("🚀 HybridChain REST API running on http://127.0.0.1:3000");
+    println!("🚀 Hikmalayer REST API running on http://127.0.0.1:3000");
     println!("🌐 CORS enabled for React app on http://localhost:5173");
     println!("📋 Available endpoints:");
     println!("  🔐 AUTHENTICATION:");

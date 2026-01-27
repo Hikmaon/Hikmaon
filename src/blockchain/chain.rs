@@ -7,6 +7,8 @@ use serde::{Deserialize, Serialize};
 pub struct Blockchain {
     pub blocks: Vec<Block>,
     pub difficulty: usize,
+    #[serde(default)]
+    pub finalized_height: u64,
 }
 
 impl Blockchain {
@@ -25,6 +27,7 @@ impl Blockchain {
         Blockchain {
             blocks: vec![genesis_block],
             difficulty,
+            finalized_height: 0,
         }
     }
 
