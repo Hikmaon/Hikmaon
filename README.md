@@ -57,11 +57,14 @@ hybridchain/
 │   ├── contract/
 │   │   ├── contract.rs
 │   │   └── mod.rs
+│   ├── governance.rs
+│   ├── persistence.rs
 │   ├── token/
 │   │   ├── fungible.rs
 │   │   └── mod.rs
 │   ├── utils/
 │   └── main.rs
+├── data/
 ├── target/
 ├── .gitignore
 ├── Cargo.lock
