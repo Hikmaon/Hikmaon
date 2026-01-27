@@ -37,7 +37,6 @@ pub struct AppState {
     pub governance: Arc<Mutex<GovernanceConfig>>,
     pub slash_evidence: Arc<Mutex<Vec<crate::persistence::SlashEvidence>>>,
     pub metrics: Arc<Mutex<Metrics>>,
-    pub p2p_token: Option<String>,
 }
 
 #[derive(Deserialize)]
@@ -80,7 +79,6 @@ pub struct PeerRequest {
 #[derive(Deserialize)]
 pub struct GovernanceRequest {
     pub slash_percent: u64,
-    pub finality_depth: u64,
 }
 
 #[derive(Deserialize)]
@@ -156,7 +154,6 @@ pub struct ValidatorInfo {
 #[derive(Serialize)]
 pub struct GovernanceResponse {
     pub slash_percent: u64,
-    pub finality_depth: u64,
 }
 
 #[derive(Serialize)]
@@ -186,22 +183,12 @@ async fn persist_state(state: &AppState) -> Result<(), String> {
     let governance = state.governance.lock().await;
     let slash_evidence = state.slash_evidence.lock().await;
 
-    let stakers_snapshot: Vec<Staker> = stakers
-        .iter()
-        .map(|staker| Staker {
-            address: staker.address.clone(),
-            stake: staker.stake,
-            public_key: staker.public_key.clone(),
-            private_key: None,
-        })
-        .collect();
-
     let snapshot = AppSnapshot {
         chain: chain.clone(),
         token: token.clone(),
         contracts: contracts.clone(),
         pending_transactions: pending.clone(),
-        stakers: stakers_snapshot,
+        stakers: stakers.clone(),
         peers: peers.clone(),
         governance: governance.clone(),
         slash_evidence: slash_evidence.clone(),
@@ -228,16 +215,6 @@ async fn gossip_blocks(state: &AppState, blocks: Vec<Block>) -> Result<(), Strin
         }
     }
     Ok(())
-}
-
-fn authorize_p2p(headers: &HeaderMap, state: &AppState) -> bool {
-    let Some(token) = state.p2p_token.as_ref() else {
-        return true;
-    };
-    headers
-        .get("x-p2p-token")
-        .and_then(|value| value.to_str().ok())
-        .is_some_and(|value| value == token)
 }
 
 pub fn api_routes() -> Router<AppState> {
@@ -401,7 +378,6 @@ async fn get_block_by_index(State(state): State<AppState>, Path(index): Path<usi
 async fn get_blockchain_stats(State(state): State<AppState>) -> Json<BlockchainStats> {
     let chain = state.chain.lock().await;
     let pending = state.pending_transactions.lock().await;
-    let governance = state.governance.lock().await;
     
     Json(BlockchainStats {
         total_blocks: chain.blocks.len(),
@@ -417,10 +393,6 @@ async fn get_blockchain_stats(State(state): State<AppState>) -> Json<BlockchainS
 // ===== MINING ENDPOINTS =====
 
 async fn mine_block(State(state): State<AppState>) -> Json<MiningResponse> {
-    let finality_depth = {
-        let governance = state.governance.lock().await;
-        governance.finality_depth
-    };
     let mut pending = state.pending_transactions.lock().await;
     let mut chain = state.chain.lock().await;
     let stakers = state.stakers.lock().await;
@@ -554,7 +526,6 @@ async fn mine_block(State(state): State<AppState>) -> Json<MiningResponse> {
     };
     block.validator_signature = Some(signature);
     chain.add_mined_block(block);
-    chain.apply_finality(finality_depth);
     let block_index = chain.blocks.len() as u64 - 1;
     let block_to_gossip = chain.blocks.last().cloned();
     
@@ -772,28 +743,12 @@ async fn list_validators(State(state): State<AppState>) -> Json<Vec<ValidatorInf
 
 // ===== P2P ENDPOINTS =====
 
-async fn list_peers(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-) -> Json<Vec<String>> {
-    if !authorize_p2p(&headers, &state) {
-        return Json(Vec::new());
-    }
+async fn list_peers(State(state): State<AppState>) -> Json<Vec<String>> {
     let peers = state.peers.lock().await;
     Json(peers.clone())
 }
 
-async fn register_peer(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Json(payload): Json<PeerRequest>,
-) -> Json<ApiResponse> {
-    if !authorize_p2p(&headers, &state) {
-        return Json(ApiResponse {
-            status: "error".to_string(),
-            message: "Unauthorized peer request".to_string(),
-        });
-    }
+async fn register_peer(State(state): State<AppState>, Json(payload): Json<PeerRequest>) -> Json<ApiResponse> {
     if payload.address.trim().is_empty() {
         return Json(ApiResponse {
             status: "error".to_string(),
@@ -816,21 +771,7 @@ async fn register_peer(
     })
 }
 
-async fn receive_block(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Json(block): Json<Block>,
-) -> Json<ApiResponse> {
-    if !authorize_p2p(&headers, &state) {
-        return Json(ApiResponse {
-            status: "error".to_string(),
-            message: "Unauthorized peer request".to_string(),
-        });
-    }
-    let finality_depth = {
-        let governance = state.governance.lock().await;
-        governance.finality_depth
-    };
+async fn receive_block(State(state): State<AppState>, Json(block): Json<Block>) -> Json<ApiResponse> {
     let mut chain = state.chain.lock().await;
 
     if let Err(message) = chain.validate_block_candidate(&block) {
@@ -841,7 +782,6 @@ async fn receive_block(
     }
 
     chain.add_mined_block(block);
-    chain.apply_finality(finality_depth);
     drop(chain);
     let mut metrics = state.metrics.lock().await;
     metrics.blocks_received += 1;
@@ -853,21 +793,7 @@ async fn receive_block(
     })
 }
 
-async fn receive_blocks(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-    Json(blocks): Json<Vec<Block>>,
-) -> Json<ApiResponse> {
-    if !authorize_p2p(&headers, &state) {
-        return Json(ApiResponse {
-            status: "error".to_string(),
-            message: "Unauthorized peer request".to_string(),
-        });
-    }
-    let finality_depth = {
-        let governance = state.governance.lock().await;
-        governance.finality_depth
-    };
+async fn receive_blocks(State(state): State<AppState>, Json(blocks): Json<Vec<Block>>) -> Json<ApiResponse> {
     let mut chain = state.chain.lock().await;
     let mut accepted = 0u64;
 
@@ -878,9 +804,6 @@ async fn receive_blocks(
         } else {
             break;
         }
-    }
-    if accepted > 0 {
-        chain.apply_finality(finality_depth);
     }
     drop(chain);
 
@@ -902,7 +825,6 @@ async fn get_governance(State(state): State<AppState>) -> Json<GovernanceRespons
     let governance = state.governance.lock().await;
     Json(GovernanceResponse {
         slash_percent: governance.slash_percent,
-        finality_depth: governance.finality_depth,
     })
 }
 
@@ -916,25 +838,15 @@ async fn update_governance(
             message: "slash_percent must be between 1 and 100".to_string(),
         });
     }
-    if payload.finality_depth == 0 || payload.finality_depth > 10_000 {
-        return Json(ApiResponse {
-            status: "error".to_string(),
-            message: "finality_depth must be between 1 and 10,000".to_string(),
-        });
-    }
 
     let mut governance = state.governance.lock().await;
     governance.slash_percent = payload.slash_percent;
-    governance.finality_depth = payload.finality_depth;
     drop(governance);
     let _ = persist_state(&state).await;
 
     Json(ApiResponse {
         status: "success".to_string(),
-        message: format!(
-            "Updated slash_percent to {} and finality_depth to {}",
-            payload.slash_percent, payload.finality_depth
-        ),
+        message: format!("Updated slash_percent to {}", payload.slash_percent),
     })
 }
 

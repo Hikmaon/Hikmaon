@@ -90,23 +90,6 @@ impl Blockchain {
         self.blocks.push(block);
     }
 
-    pub fn apply_finality(&mut self, finality_depth: u64) {
-        if self.blocks.is_empty() {
-            self.finalized_height = 0;
-            return;
-        }
-        if finality_depth == 0 {
-            self.finalized_height = self.blocks.len() as u64 - 1;
-            return;
-        }
-        let chain_len = self.blocks.len() as u64;
-        if chain_len > finality_depth {
-            self.finalized_height = chain_len - 1 - finality_depth;
-        } else {
-            self.finalized_height = 0;
-        }
-    }
-
     pub fn validate_block_candidate(&self, block: &Block) -> Result<(), String> {
         let expected_index = self.blocks.len() as u64;
         if block.index != expected_index {
