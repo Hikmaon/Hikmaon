@@ -23,7 +23,7 @@ async fn generate_nonce(
     State(state): State<crate::api::routes::AppState>,
     Json(payload): Json<NonceRequest>,
 ) -> Result<Json<NonceResponse>, StatusCode> {
-    let mut auth_manager = state.auth_manager.lock().unwrap();
+    let mut auth_manager = state.auth_manager.lock().await;
     let nonce = auth_manager.generate_nonce(&payload.address);
     
     Ok(Json(NonceResponse { nonce }))
@@ -33,7 +33,7 @@ async fn verify_signature(
     State(state): State<crate::api::routes::AppState>,
     Json(payload): Json<VerifyRequest>,
 ) -> Result<Json<VerifyResponse>, StatusCode> {
-    let mut auth_manager = state.auth_manager.lock().unwrap();
+    let mut auth_manager = state.auth_manager.lock().await;
     
     // Verify the nonce
     if !auth_manager.verify_nonce(&payload.address, &payload.nonce) {
