@@ -76,7 +76,6 @@ async fn main() {
             .unwrap_or_default(),
     ));
     let metrics = Arc::new(Mutex::new(api::routes::Metrics::default()));
-    let p2p_token = std::env::var("P2P_TOKEN").ok();
 
     let app_state = AppState {
         chain,
@@ -89,7 +88,6 @@ async fn main() {
         governance,
         slash_evidence,
         metrics,
-        p2p_token,
     };
 
     // Configure CORS to allow React app on localhost:5173
