@@ -5,12 +5,13 @@
 **August 2025**  
 **License:** Creative Commons Attribution 4.0 International (CC BY 4.0)
 
-**Author:** 
-Muhammad Ayan Rao
-Founder & Director
-Bestower Labs Limited
-Ayanrao@bestowerlabs.com
+**Author:**  
+Muhammad Ayan Rao  
+Founder & Director,  
+Bestower Labs Limited  
+Ayanrao@bestowerlabs.com  
 www.bestowerlabs.com
+
 
 
 ---
