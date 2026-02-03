@@ -1,17 +1,22 @@
-# HybridChain: A Blockchain Platform for Digital Certificates and Token Management
+# Hikmalayer: A Blockchain Platform for Digital Certificates and Token Management
 
 **Version 1.0**  
 **August 2025**
+
+**Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
 
 ---
 
 ## Abstract
 
-HybridChain is a purpose-built blockchain platform designed for secure digital credential management and token-based transactions. Built with Rust and featuring proof-of-work consensus, the platform enables educational institutions and organizations to issue tamper-proof certificates while providing integrated token economics for incentive systems.
+Hikmalayer is a purpose-built blockchain platform designed for secure digital credential management and token-based transactions. Built with Rust and featuring hybrid proof-of-stake validator selection with proof-of-work finalization, the platform enables educational institutions and organizations to issue tamper-proof certificates while providing integrated token economics for incentive systems.
 
-The platform addresses critical challenges in credential verification through blockchain immutability, smart contract automation, and comprehensive REST APIs that enable seamless integration with existing systems. HybridChain combines security, performance, and ease of use to create a practical solution for real-world credentialing needs.
+Hikmalayer is stewarded by Bestower Labs Limited and aligned with enterprise-grade governance and
+licensing requirements.
 
-**Keywords:** Blockchain, Digital Certificates, Proof-of-Work, Smart Contracts, Token Management
+The platform addresses critical challenges in credential verification through blockchain immutability, smart contract automation, and comprehensive REST APIs that enable seamless integration with existing systems. Hikmalayer combines security, performance, and ease of use to create a practical solution for real-world credentialing needs.
+
+**Keywords:** Blockchain, Digital Certificates, Proof-of-Stake, Proof-of-Work, Hybrid Consensus, Smart Contracts, Token Management
 
 ---
 
@@ -29,13 +34,21 @@ Traditional digital credential systems suffer from several critical issues:
 
 ### 1.2 Solution Overview
 
-HybridChain addresses these challenges through:
+Hikmalayer addresses these challenges through:
 
 - **Immutable blockchain storage** preventing certificate tampering
 - **Automated verification** through smart contracts
 - **Integrated token system** for rewards and incentives
 - **Comprehensive REST API** for easy integration
-- **Proof-of-work consensus** ensuring network security
+- **Hybrid PoS/PoW consensus** ensuring validator accountability and PoW finalization
+- **Operational hardening** with optional admin/P2P authorization and finality tracking
+
+---
+
+## Licensing
+
+Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. See the repository
+`LICENSE` file for full terms and commercial licensing options.
 
 ---
 
@@ -49,7 +62,7 @@ HybridChain addresses these challenges through:
 ├─────────────────────────────────────────────────────────┤
 │              Smart Contracts & Tokens                  │
 ├─────────────────────────────────────────────────────────┤
-│               Proof-of-Work Consensus                   │
+│             Hybrid PoS/PoW Consensus                    │
 ├─────────────────────────────────────────────────────────┤
 │                 Blockchain Storage                      │
 └─────────────────────────────────────────────────────────┘
@@ -320,7 +333,7 @@ curl -X POST /certificates/verify -d '{"id":"CERT001"}'
 
 ## 10. Conclusion
 
-HybridChain provides a practical, secure solution for digital credential management through blockchain technology. By combining proof-of-work consensus, smart contract automation, and comprehensive APIs, the platform addresses real-world credentialing challenges while maintaining simplicity and performance.
+Hikmalayer provides a practical, secure solution for digital credential management through blockchain technology. By combining proof-of-work consensus, smart contract automation, and comprehensive APIs, the platform addresses real-world credentialing challenges while maintaining simplicity and performance.
 
 The platform's focus on certificate management, combined with integrated token economics and developer-friendly architecture, creates immediate value for educational institutions and organizations while providing a foundation for future blockchain applications.
 
@@ -339,7 +352,7 @@ The platform's focus on certificate management, combined with integrated token e
 - Corporations tracking employee training and compliance
 - Government agencies requiring secure document verification
 
-HybridChain represents the next generation of credentialing systems, providing security, efficiency, and trust in an increasingly digital world.
+Hikmalayer represents the next generation of credentialing systems, providing security, efficiency, and trust in an increasingly digital world.
 
 ---
 

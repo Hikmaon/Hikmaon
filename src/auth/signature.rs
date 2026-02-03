@@ -31,7 +31,7 @@ pub fn recover_address_from_signature(message: &str, signature_hex: &str) -> Res
     let mut sig_bytes = [0u8; 64];
     sig_bytes[..32].copy_from_slice(r);
     sig_bytes[32..].copy_from_slice(s);
-    let signature = Signature::from_compact(&sig_bytes)?;
+    let _signature = Signature::from_compact(&sig_bytes)?;
     
     // Recovery ID (v - 27 for Ethereum)
     let recovery_id = RecoveryId::from_i32((v as i32) - 27)?;
@@ -58,8 +58,6 @@ pub fn verify_signature(address: &str, message: &str, signature: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn test_signature_format() {
         // Test that we can at least handle the format correctly
