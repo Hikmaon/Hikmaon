@@ -60,7 +60,7 @@ const AppContent = () => {
             ></div>
           </div>
           <h2 className="text-2xl font-semibold text-white mb-2">
-            Loading HybridChain...
+            Loading Hikmalayer...
           </h2>
           <p className="text-gray-400">Initializing blockchain interface</p>
         </div>
@@ -88,7 +88,7 @@ const AppContent = () => {
           {/* Header with Wallet Integration */}
           <div className="text-center mb-8">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-teal-400 bg-clip-text text-transparent mb-4">
-              HybridChain Dashboard
+              Hikmalayer Dashboard
             </h1>
             <p className="text-gray-300 text-lg mb-6">
               Next-generation blockchain platform with advanced mining,

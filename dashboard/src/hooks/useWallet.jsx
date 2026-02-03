@@ -88,7 +88,7 @@ export const WalletProvider = ({ children }) => {
       console.log("Received nonce:", nonce);
 
       // Create message to sign
-      const message = `Please sign this message to authenticate with HybridChain.\n\nNonce: ${nonce}\nAddress: ${userAccount}`;
+      const message = `Please sign this message to authenticate with Hikmalayer.\n\nNonce: ${nonce}\nAddress: ${userAccount}`;
 
       // Request signature from MetaMask
       const signature = await window.ethereum.request({
