@@ -1,17 +1,24 @@
-# HybridChain: A Multi-Purpose Blockchain Platform for Digital Certificates and Tokenized Assets
+# Hikmalayer: A Multi-Purpose Blockchain Platform for Digital Certificates and Tokenized Assets
 
+**Official Whitepaper**  
 **Version 1.0**  
-**August 2025**
+**August 2025**  
+**License:** Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+**Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
 
 ---
 
 ## Abstract
 
-HybridChain represents a next-generation blockchain platform designed to address the growing demand for secure, verifiable digital credentials and efficient token-based transactions. Built on Rust's performance-oriented architecture, HybridChain implements a proof-of-work consensus mechanism with integrated smart contract functionality, enabling seamless certificate management and fungible token operations within a unified ecosystem.
+Hikmalayer represents a next-generation blockchain platform designed to address the growing demand for secure, verifiable digital credentials and efficient token-based transactions. Built on Rust's performance-oriented architecture, Hikmalayer implements a hybrid proof-of-stake validator selection model with proof-of-work block finalization, enabling seamless certificate management and fungible token operations within a unified ecosystem.
 
-The platform addresses critical challenges in digital credential verification, asset tokenization, and decentralized application development by providing a robust, scalable infrastructure that combines the security of traditional blockchain architectures with the flexibility of modern smart contract systems. Through its comprehensive REST API and modular design, HybridChain enables developers and organizations to build trust-based applications with minimal complexity while maintaining enterprise-grade security standards.
+This whitepaper is released under CC BY 4.0 to encourage broad distribution, translation, and
+academic citation while preserving attribution to Bestower Labs Limited and the Hikmalayer team.
 
-**Keywords:** Blockchain, Digital Certificates, Proof-of-Work, Smart Contracts, Token Management, Decentralized Verification
+The platform addresses critical challenges in digital credential verification, asset tokenization, and decentralized application development by providing a robust, scalable infrastructure that combines the security of traditional blockchain architectures with the flexibility of modern smart contract systems. Through its comprehensive REST API and modular design, Hikmalayer enables developers and organizations to build trust-based applications with minimal complexity while maintaining enterprise-grade security standards.
+
+**Keywords:** Blockchain, Digital Certificates, Proof-of-Stake, Proof-of-Work, Hybrid Consensus, Smart Contracts, Token Management, Decentralized Verification
 
 ---
 
@@ -21,7 +28,10 @@ The platform addresses critical challenges in digital credential verification, a
 
 The digital transformation of modern organizations has created an unprecedented demand for secure, verifiable, and tamper-proof systems for managing credentials, assets, and transactions. Traditional centralized systems suffer from single points of failure, limited transparency, and vulnerability to fraud. While existing blockchain platforms provide solutions to these challenges, they often lack the specialized features required for certificate management and struggle with complexity, scalability, or integration challenges.
 
-HybridChain emerges as a purpose-built solution that bridges these gaps by offering a streamlined yet powerful blockchain platform specifically optimized for digital certificate management and token-based economies. The platform recognizes that modern organizations require not just a blockchain, but a complete ecosystem that can handle diverse use cases ranging from academic credentials to professional certifications and asset tokenization.
+Hikmalayer emerges as a purpose-built solution that bridges these gaps by offering a streamlined yet powerful blockchain platform specifically optimized for digital certificate management and token-based economies. The platform recognizes that modern organizations require not just a blockchain, but a complete ecosystem that can handle diverse use cases ranging from academic credentials to professional certifications and asset tokenization.
+
+Hikmalayer is stewarded by Bestower Labs Limited, which provides the operational and governance
+framework for the protocol’s evolution.
 
 ### 1.2 Problem Statement
 
@@ -36,14 +46,15 @@ Contemporary digital credential systems face several critical challenges:
 
 ### 1.3 Solution Overview
 
-HybridChain addresses these challenges through a comprehensive blockchain platform that combines:
+Hikmalayer addresses these challenges through a comprehensive blockchain platform that combines:
 
-- **Efficient Proof-of-Work Consensus**: Ensures network security while maintaining reasonable energy consumption
+- **Hybrid PoS/PoW Consensus**: PoS selects validators while PoW finalizes blocks for strong security guarantees
 - **Integrated Certificate Management**: Native support for issuing, verifying, and managing digital certificates
 - **Fungible Token System**: Built-in tokenization capabilities for reward mechanisms and economic incentives
 - **Smart Contract Framework**: Flexible contract execution environment for complex business logic
 - **Developer-Friendly API**: Comprehensive REST endpoints enabling rapid integration and development
 - **Modular Architecture**: Extensible design supporting future enhancements and customizations
+- **Operational Hardening**: Optional admin and P2P authorization tokens plus finalized-state tracking
 
 ---
 
@@ -51,7 +62,7 @@ HybridChain addresses these challenges through a comprehensive blockchain platfo
 
 ### 2.1 System Overview
 
-HybridChain's architecture follows a layered approach that separates concerns while maintaining tight integration between components. The system is built entirely in Rust, leveraging the language's memory safety, performance characteristics, and growing ecosystem of blockchain-oriented libraries.
+Hikmalayer's architecture follows a layered approach that separates concerns while maintaining tight integration between components. The system is built entirely in Rust, leveraging the language's memory safety, performance characteristics, and growing ecosystem of blockchain-oriented libraries.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -62,7 +73,7 @@ HybridChain's architecture follows a layered approach that separates concerns wh
 │     (Smart Contracts, Tokens, Certificate Logic)        │
 ├─────────────────────────────────────────────────────────┤
 │                 Consensus Layer                         │
-│              (Proof-of-Work Mining)                     │
+│            (Hybrid PoS/PoW Consensus)                   │
 ├─────────────────────────────────────────────────────────┤
 │                 Blockchain Layer                        │
 │           (Blocks, Transactions, Chain Logic)           │
@@ -95,7 +106,7 @@ pub struct Block {
 The blockchain maintains a continuous chain of blocks, starting with a genesis block and extending through mined blocks. Each block contains a cryptographic hash linking it to its predecessor, ensuring immutability and detecting any attempts at tampering.
 
 **Transaction Types:**
-HybridChain supports multiple transaction types to accommodate diverse use cases:
+Hikmalayer supports multiple transaction types to accommodate diverse use cases:
 
 - **Transfer Transactions**: Token movements between accounts
 - **Certificate Transactions**: Digital credential issuance and verification
@@ -103,15 +114,17 @@ HybridChain supports multiple transaction types to accommodate diverse use cases
 
 #### 2.2.2 Consensus Mechanism
 
-HybridChain implements a proof-of-work consensus algorithm optimized for moderate computational requirements while maintaining security:
+Hikmalayer implements a hybrid PoS/PoW consensus algorithm optimized for validator accountability
+and PoW security:
 
 **Mining Process:**
 
 1. **Transaction Collection**: Gather pending transactions from the transaction pool
-2. **Block Assembly**: Create a candidate block with collected transactions
-3. **Nonce Discovery**: Find a nonce value that produces a hash meeting difficulty requirements
-4. **Block Validation**: Verify the block meets all consensus rules
-5. **Chain Integration**: Add the validated block to the blockchain
+2. **Validator Selection (PoS)**: Select the validator deterministically based on the staker set
+3. **Block Assembly**: Create a candidate block with collected transactions and validator metadata
+4. **Nonce Discovery (PoW)**: Find a nonce value that produces a hash meeting difficulty requirements
+5. **Block Validation**: Verify PoS selection, validator signature, and PoW validity
+6. **Chain Integration**: Add the validated block to the blockchain
 
 **Difficulty Adjustment:**
 The platform supports dynamic difficulty adjustment through API endpoints, allowing network administrators to balance security requirements with mining efficiency based on network conditions.
@@ -129,7 +142,7 @@ The ContractExecutor provides a foundation for smart contract functionality, cur
 
 ### 2.3 Token System
 
-HybridChain includes a comprehensive fungible token system supporting:
+Hikmalayer includes a comprehensive fungible token system supporting:
 
 **Core Token Operations:**
 
@@ -168,23 +181,28 @@ The REST API layer provides comprehensive access to all platform functionality t
 
 ## 3. Consensus Mechanism
 
-### 3.1 Proof-of-Work Implementation
+### 3.1 Hybrid PoS/PoW Overview
 
-HybridChain implements a SHA-256 based proof-of-work consensus mechanism designed to provide security while maintaining reasonable computational requirements for educational and enterprise environments.
+Hikmalayer uses a hybrid consensus model in which proof-of-stake (PoS) selects the validator and
+proof-of-work (PoW) finalizes the block. This approach preserves PoW security while introducing
+stake‑based validator selection and accountability.
 
-**Algorithm Specification:**
+**Validator Selection (PoS):**
 
-The mining algorithm follows these steps:
+1. **Stake Snapshot**: Validators register stake and are weighted by stake amount.
+2. **Deterministic Selection**: The validator is selected using a deterministic seed derived from
+   the previous block hash and the current staker set hash.
+3. **Signature Requirement**: The selected validator signs the block hash to prove authorship.
 
-1. **Input Preparation**: Combine block data including index, transactions, timestamp, and previous hash
-2. **Nonce Iteration**: Systematically try different nonce values starting from 0
-3. **Hash Computation**: Calculate SHA-256 hash of the combined input and nonce
-4. **Difficulty Check**: Verify if the hash begins with the required number of zeros
-5. **Solution Validation**: Return the successful nonce and corresponding hash
+**Block Finalization (PoW):**
+
+The validator mines the block using PoW to meet the required difficulty. PoW validation remains
+mandatory for every block and ensures cryptographic finalization.
 
 **Difficulty Mechanics:**
 
-The difficulty parameter determines the number of leading zeros required in the block hash. This creates an adjustable computational challenge that can scale with network requirements:
+The difficulty parameter determines the number of leading zeros required in the block hash. This
+creates an adjustable computational challenge that can scale with network requirements:
 
 - **Difficulty 1**: Hash must start with "0" (approximately 1 in 16 attempts)
 - **Difficulty 2**: Hash must start with "00" (approximately 1 in 256 attempts)
@@ -192,12 +210,12 @@ The difficulty parameter determines the number of leading zeros required in the 
 
 **Security Properties:**
 
-The proof-of-work system provides several critical security guarantees:
+The hybrid model provides the following guarantees:
 
-- **Immutability**: Changing historical blocks requires re-mining all subsequent blocks
-- **Consensus**: The longest valid chain represents the authoritative blockchain state
-- **Decentralization**: No single entity can control the network without majority computational power
-- **Transparency**: All mining operations and solutions are verifiable by network participants
+- **Validator Accountability**: Validators are chosen by stake and must sign blocks.
+- **Immutability**: Rewriting history requires re-mining PoW and reproducing PoS selection.
+- **Consensus**: The longest valid chain with valid PoS and PoW data is authoritative.
+- **Transparency**: Validator selection and PoW proofs are verifiable by all participants.
 
 ### 3.2 Mining Economics
 
@@ -221,7 +239,7 @@ The consensus mechanism encourages network participation through:
 
 ### 4.1 Contract Architecture
 
-HybridChain's smart contract system is built around the ContractExecutor, which provides a secure, efficient environment for executing deterministic business logic on the blockchain.
+Hikmalayer's smart contract system is built around the ContractExecutor, which provides a secure, efficient environment for executing deterministic business logic on the blockchain.
 
 **Design Philosophy:**
 
@@ -229,6 +247,16 @@ HybridChain's smart contract system is built around the ContractExecutor, which 
 - **State Isolation**: Contract state is managed separately from blockchain state
 - **Integration Points**: Seamless interaction between contracts, tokens, and blockchain operations
 - **Extensibility**: Modular design supports addition of new contract types
+
+---
+
+## 10. Licensing
+
+Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. Commercial deployment,
+hosting, or managed services require a separate commercial agreement with Bestower Labs Limited.
+Refer to the repository `LICENSE` file for the complete terms.
+
+This whitepaper is licensed under CC BY 4.0 to allow sharing and reuse with attribution.
 
 ### 4.2 Certificate Management Contracts
 
@@ -293,7 +321,7 @@ Contract state is maintained in memory during operation, with persistence achiev
 
 ### 5.1 Token Design
 
-HybridChain implements a comprehensive fungible token system designed to support diverse economic models and incentive structures within the blockchain ecosystem.
+Hikmalayer implements a comprehensive fungible token system designed to support diverse economic models and incentive structures within the blockchain ecosystem.
 
 **Token Specification:**
 
@@ -368,7 +396,7 @@ The token system creates positive feedback loops that encourage network particip
 ### 6.1 Academic Credentials
 
 **Digital Diploma Management:**
-Educational institutions can leverage HybridChain to issue tamper-proof digital diplomas and certificates:
+Educational institutions can leverage Hikmalayer to issue tamper-proof digital diplomas and certificates:
 
 - **Issuance Process**: Universities create certificates on-chain with student information, degree details, and institutional signatures
 - **Verification System**: Employers and third parties can instantly verify academic credentials without contacting the issuing institution
@@ -404,7 +432,7 @@ The certificate system extends to supply chain and quality assurance application
 ### 6.3 Digital Identity and KYC
 
 **Identity Verification:**
-HybridChain can serve as a foundation for decentralized identity management:
+Hikmalayer can serve as a foundation for decentralized identity management:
 
 - **Identity Proofing**: Cryptographically verifiable identity credentials
 - **Privacy Protection**: Selective disclosure of identity attributes as needed
@@ -440,7 +468,7 @@ Foster active community engagement through token incentives:
 ### 6.5 Integration Scenarios
 
 **Enterprise Integration:**
-HybridChain's API-first approach enables seamless integration with existing enterprise systems:
+Hikmalayer's API-first approach enables seamless integration with existing enterprise systems:
 
 - **HR Systems**: Integration with human resources platforms for employee certification tracking
 - **Learning Management**: Connection with LMS platforms for automated certificate issuance
@@ -462,7 +490,7 @@ The platform supports integration with other blockchain networks and traditional
 ### 7.1 Cryptographic Security
 
 **Hash Function Security:**
-HybridChain employs SHA-256 cryptographic hashing throughout the system, providing:
+Hikmalayer employs SHA-256 cryptographic hashing throughout the system, providing:
 
 - **Collision Resistance**: Computationally infeasible to find two inputs producing the same hash
 - **Pre-image Resistance**: Cannot determine input data from hash output alone
@@ -738,12 +766,12 @@ Several areas offer future performance improvements:
 
 ## 10. Conclusion
 
-HybridChain represents a significant advancement in blockchain technology, specifically designed to address the critical needs of digital credential management and tokenized asset systems. Through its comprehensive architecture combining proof-of-work consensus, smart contract functionality, and integrated token economics, the platform provides a robust foundation for next-generation trust-based applications.
+Hikmalayer represents a significant advancement in blockchain technology, specifically designed to address the critical needs of digital credential management and tokenized asset systems. Through its comprehensive architecture combining proof-of-work consensus, smart contract functionality, and integrated token economics, the platform provides a robust foundation for next-generation trust-based applications.
 
 ### 10.1 Key Contributions
 
 **Technical Innovation:**
-HybridChain's technical architecture demonstrates several important innovations:
+Hikmalayer's technical architecture demonstrates several important innovations:
 
 - **Integrated Certificate Management**: Native blockchain support for digital credentials eliminates the need for separate credentialing systems
 - **Unified Token Economy**: Seamless integration between certificates, tokens, and smart contracts creates coherent economic incentives
@@ -769,7 +797,7 @@ The token-based incentive system creates sustainable economic models:
 ### 10.2 Impact Assessment
 
 **Industry Transformation:**
-HybridChain has the potential to significantly impact several industries:
+Hikmalayer has the potential to significantly impact several industries:
 
 - **Education**: Reduced verification overhead and elimination of diploma fraud
 - **Human Resources**: Streamlined hiring processes with instant credential verification
@@ -785,7 +813,7 @@ The platform provides significant social benefits:
 - **Efficiency**: Substantial reduction in time and cost for credential management and verification
 
 **Economic Value:**
-HybridChain creates economic value through:
+Hikmalayer creates economic value through:
 
 - **Cost Reduction**: Elimination of manual verification processes and reduced fraud losses
 - **Market Expansion**: New business models enabled by reliable digital credentialing
@@ -795,7 +823,7 @@ HybridChain creates economic value through:
 ### 10.3 Strategic Vision
 
 **Long-term Objectives:**
-HybridChain's strategic vision encompasses:
+Hikmalayer's strategic vision encompasses:
 
 - **Universal Adoption**: Becoming a standard platform for digital credential management across industries
 - **Technology Leadership**: Maintaining technical innovation leadership in blockchain-based credentialing systems
@@ -811,7 +839,7 @@ Platform success will be measured through:
 - **User Satisfaction**: Quality of user experience and satisfaction metrics across all stakeholder groups
 
 **Sustainability Commitment:**
-HybridChain commits to long-term sustainability through:
+Hikmalayer commits to long-term sustainability through:
 
 - **Open Source Foundation**: Core platform available under open source licenses
 - **Community Governance**: Transition to community-driven governance and development
@@ -823,13 +851,13 @@ HybridChain commits to long-term sustainability through:
 **For Educational Institutions:**
 Academic institutions are invited to participate in the digital credential revolution by:
 
-- **Pilot Programs**: Implementing HybridChain for select certification programs to evaluate benefits and workflow integration
-- **Research Collaboration**: Partnering with the HybridChain development team on academic research projects exploring blockchain applications in education
+- **Pilot Programs**: Implementing Hikmalayer for select certification programs to evaluate benefits and workflow integration
+- **Research Collaboration**: Partnering with the Hikmalayer development team on academic research projects exploring blockchain applications in education
 - **Student Benefits**: Providing students with tamper-proof, instantly verifiable credentials that enhance career prospects and mobility
 - **Administrative Efficiency**: Reducing administrative overhead while improving credential security and verification capabilities
 
 **For Employers and HR Professionals:**
-Organizations can leverage HybridChain to streamline hiring and compliance processes:
+Organizations can leverage Hikmalayer to streamline hiring and compliance processes:
 
 - **Verification Integration**: Implementing API integrations to instantly verify candidate credentials during recruitment processes
 - **Compliance Management**: Using the platform to track employee certifications, training completion, and regulatory compliance
@@ -839,7 +867,7 @@ Organizations can leverage HybridChain to streamline hiring and compliance proce
 **For Technology Partners:**
 Developers and technology companies can contribute to the ecosystem by:
 
-- **Application Development**: Building applications and services that leverage HybridChain's API and smart contract capabilities
+- **Application Development**: Building applications and services that leverage Hikmalayer's API and smart contract capabilities
 - **Integration Solutions**: Creating connectors and integrations with existing enterprise software systems
 - **Platform Enhancement**: Contributing to the open source codebase with improvements, bug fixes, and new features
 - **Standards Development**: Participating in industry standards development to ensure interoperability and adoption
@@ -963,7 +991,7 @@ All API endpoints use standardized JSON schemas for request and response formats
 ### 12.1 Governance Framework
 
 **Current Governance Model:**
-HybridChain currently operates under a centralized development model with plans for community governance transition:
+Hikmalayer currently operates under a centralized development model with plans for community governance transition:
 
 - **Core Development**: Led by the founding development team with clear technical leadership
 - **Feature Decisions**: Based on community feedback, technical requirements, and strategic roadmap
@@ -997,7 +1025,7 @@ The platform will evolve toward decentralized governance through several phases:
 ### 12.2 Regulatory Compliance
 
 **Data Protection Compliance:**
-HybridChain is designed with privacy and data protection requirements in mind:
+Hikmalayer is designed with privacy and data protection requirements in mind:
 
 **GDPR Compliance (European Union):**
 
@@ -1022,7 +1050,7 @@ HybridChain is designed with privacy and data protection requirements in mind:
 - **Audit Trails**: Comprehensive logging for compliance auditing and reporting
 
 **Financial Regulations:**
-While HybridChain focuses on credentials rather than financial services, token-related compliance considerations include:
+While Hikmalayer focuses on credentials rather than financial services, token-related compliance considerations include:
 
 - **Token Classification**: Utility tokens designed to avoid securities regulations
 - **AML/KYC Preparation**: Architecture supports future implementation of anti-money laundering controls
@@ -1032,7 +1060,7 @@ While HybridChain focuses on credentials rather than financial services, token-r
 ### 12.3 Standards Compliance
 
 **Industry Standards Participation:**
-HybridChain actively participates in relevant industry standards development:
+Hikmalayer actively participates in relevant industry standards development:
 
 **W3C Standards:**
 
@@ -1061,7 +1089,7 @@ HybridChain actively participates in relevant industry standards development:
 ### 12.4 Ethical Considerations
 
 **Responsible Development:**
-HybridChain commits to responsible technology development through:
+Hikmalayer commits to responsible technology development through:
 
 **Accessibility and Inclusion:**
 
@@ -1246,13 +1274,13 @@ HybridChain commits to responsible technology development through:
 
 ## 14. Conclusion
 
-HybridChain represents a transformative approach to digital credential management and blockchain technology, offering a comprehensive platform that addresses real-world challenges while providing a foundation for future innovation. Through careful analysis of technical architecture, use cases, security considerations, and future development opportunities, this whitepaper demonstrates the platform's potential to significantly impact education, professional development, and trust-based systems globally.
+Hikmalayer represents a transformative approach to digital credential management and blockchain technology, offering a comprehensive platform that addresses real-world challenges while providing a foundation for future innovation. Through careful analysis of technical architecture, use cases, security considerations, and future development opportunities, this whitepaper demonstrates the platform's potential to significantly impact education, professional development, and trust-based systems globally.
 
-The combination of proof-of-work consensus, integrated smart contracts, and comprehensive token economics creates a unique value proposition that distinguishes HybridChain from generic blockchain platforms. By focusing specifically on credential management while maintaining extensibility for broader applications, the platform provides immediate value while preserving long-term growth potential.
+The combination of proof-of-work consensus, integrated smart contracts, and comprehensive token economics creates a unique value proposition that distinguishes Hikmalayer from generic blockchain platforms. By focusing specifically on credential management while maintaining extensibility for broader applications, the platform provides immediate value while preserving long-term growth potential.
 
 The technical implementation in Rust provides excellent performance characteristics and security properties, while the comprehensive REST API ensures accessibility for developers across various skill levels and technology stacks. The commitment to open source development and community governance establishes a foundation for sustainable long-term growth and innovation.
 
-As digital transformation continues accelerating across all sectors, HybridChain is positioned to play a crucial role in establishing trust, verifying credentials, and enabling new forms of value exchange in the digital economy. The platform's focus on practical applications, combined with its robust technical foundation, provides an excellent foundation for the next generation of blockchain-based applications and services.
+As digital transformation continues accelerating across all sectors, Hikmalayer is positioned to play a crucial role in establishing trust, verifying credentials, and enabling new forms of value exchange in the digital economy. The platform's focus on practical applications, combined with its robust technical foundation, provides an excellent foundation for the next generation of blockchain-based applications and services.
 
 ---
 
@@ -1297,10 +1325,10 @@ As digital transformation continues accelerating across all sectors, HybridChain
 
 **Document Information:**
 
-- **Title**: HybridChain: A Multi-Purpose Blockchain Platform for Digital Certificates and Tokenized Assets
+- **Title**: Hikmalayer: A Multi-Purpose Blockchain Platform for Digital Certificates and Tokenized Assets
 - **Version**: 1.0
 - **Date**: August 2025
-- **Authors**: HybridChain Development Team
+- **Authors**: Hikmalayer Development Team
 - **License**: This whitepaper is released under Creative Commons Attribution 4.0 International License
 - **Contact**: For technical questions and collaboration opportunities, please refer to the project documentation and community channels
 

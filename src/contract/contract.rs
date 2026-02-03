@@ -1,9 +1,10 @@
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 use crate::token::fungible::Token;
 
 /// Represents a simple on-chain certificate
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Certificate {
     pub id: String,
     pub issued_to: String,
@@ -12,6 +13,7 @@ pub struct Certificate {
 }
 
 /// The contract executor that manages certificates and token issuance
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ContractExecutor {
     pub certificates: HashMap<String, Certificate>,
 }
