@@ -8,7 +8,7 @@ use axum::{
 };
 
 use super::{
-    AuthManager, NonceRequest, NonceResponse, VerifyRequest, VerifyResponse, AuthResponse,
+    AuthResponse, NonceRequest, NonceResponse, VerifyRequest, VerifyResponse,
     signature::recover_address_from_signature,
 };
 
@@ -61,7 +61,7 @@ async fn verify_signature(
 }
 
 async fn logout(
-    State(state): State<crate::api::routes::AppState>,
+    State(_state): State<crate::api::routes::AppState>,
 ) -> Json<AuthResponse> {
     // In a full implementation, you'd get the token from the Authorization header
     // and revoke it. For now, just return success.

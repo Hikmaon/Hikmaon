@@ -11,9 +11,11 @@ selection) with Proof‑of‑Work (block finalization). It provides:
 - P2P gossip and peer discovery for block propagation.
 - A React dashboard for local interaction and testing workflows.
 
-This repository is intended as a research and development baseline for an industrial‑grade hybrid
-L1. It is not yet a complete production network, but it codifies the core hybrid consensus
-mechanics and supporting services.
+This repository is a production‑focused hybrid L1 foundation that implements the core consensus
+mechanics and operational services needed for industrial‑grade deployments. Phase 4 hardening is
+in progress to complete the production readiness checklist.
+
+For the official whitepaper, see `docs/Whitepaper.md`.
 
 ## Licence
 Refer to the repository’s license policy (add or update a LICENSE file as needed for distribution).
@@ -47,6 +49,9 @@ Manual QA can be performed using the API and dashboard:
 - Start the backend (`cargo run`) and the dashboard (`npm run dev` in `dashboard/`).
 - Verify mining, staking, transfers, and validation flows.
 - Validate P2P peer registration and block gossip by running two nodes with different ports.
+
+For secured environments, set `P2P_TOKEN` and `ADMIN_TOKEN` to require `x-p2p-token` and
+`x-admin-token` headers for P2P and governance/slashing endpoints.
 
 ## Translations
 No translations are included yet. If you want to add documentation translations, create locale‑

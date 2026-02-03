@@ -7,11 +7,11 @@
 
 ## Abstract
 
-Hikmalayer is a purpose-built blockchain platform designed for secure digital credential management and token-based transactions. Built with Rust and featuring proof-of-work consensus, the platform enables educational institutions and organizations to issue tamper-proof certificates while providing integrated token economics for incentive systems.
+Hikmalayer is a purpose-built blockchain platform designed for secure digital credential management and token-based transactions. Built with Rust and featuring hybrid proof-of-stake validator selection with proof-of-work finalization, the platform enables educational institutions and organizations to issue tamper-proof certificates while providing integrated token economics for incentive systems.
 
 The platform addresses critical challenges in credential verification through blockchain immutability, smart contract automation, and comprehensive REST APIs that enable seamless integration with existing systems. Hikmalayer combines security, performance, and ease of use to create a practical solution for real-world credentialing needs.
 
-**Keywords:** Blockchain, Digital Certificates, Proof-of-Work, Smart Contracts, Token Management
+**Keywords:** Blockchain, Digital Certificates, Proof-of-Stake, Proof-of-Work, Hybrid Consensus, Smart Contracts, Token Management
 
 ---
 
@@ -35,7 +35,8 @@ Hikmalayer addresses these challenges through:
 - **Automated verification** through smart contracts
 - **Integrated token system** for rewards and incentives
 - **Comprehensive REST API** for easy integration
-- **Proof-of-work consensus** ensuring network security
+- **Hybrid PoS/PoW consensus** ensuring validator accountability and PoW finalization
+- **Operational hardening** with optional admin/P2P authorization and finality tracking
 
 ---
 
@@ -49,7 +50,7 @@ Hikmalayer addresses these challenges through:
 ├─────────────────────────────────────────────────────────┤
 │              Smart Contracts & Tokens                  │
 ├─────────────────────────────────────────────────────────┤
-│               Proof-of-Work Consensus                   │
+│             Hybrid PoS/PoW Consensus                    │
 ├─────────────────────────────────────────────────────────┤
 │                 Blockchain Storage                      │
 └─────────────────────────────────────────────────────────┘

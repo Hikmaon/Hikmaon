@@ -17,6 +17,13 @@ Hikmalayer is a comprehensive blockchain platform featuring proof-of-work consen
 - HTTP client (curl, Postman, or any REST client)
 - Basic understanding of blockchain concepts
 
+### Authorization Tokens (Optional)
+
+Hikmalayer supports optional admin and P2P authorization headers:
+
+- `ADMIN_TOKEN`: when set, governance and slashing endpoints require `x-admin-token`.
+- `P2P_TOKEN`: when set, P2P peer and block gossip endpoints require `x-p2p-token`.
+
 ### Getting Started
 
 1. Start the Hikmalayer server: `cargo run`

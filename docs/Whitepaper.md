@@ -1,5 +1,6 @@
 # Hikmalayer: A Multi-Purpose Blockchain Platform for Digital Certificates and Tokenized Assets
 
+**Official Whitepaper**  
 **Version 1.0**  
 **August 2025**
 
@@ -7,11 +8,11 @@
 
 ## Abstract
 
-Hikmalayer represents a next-generation blockchain platform designed to address the growing demand for secure, verifiable digital credentials and efficient token-based transactions. Built on Rust's performance-oriented architecture, Hikmalayer implements a proof-of-work consensus mechanism with integrated smart contract functionality, enabling seamless certificate management and fungible token operations within a unified ecosystem.
+Hikmalayer represents a next-generation blockchain platform designed to address the growing demand for secure, verifiable digital credentials and efficient token-based transactions. Built on Rust's performance-oriented architecture, Hikmalayer implements a hybrid proof-of-stake validator selection model with proof-of-work block finalization, enabling seamless certificate management and fungible token operations within a unified ecosystem.
 
 The platform addresses critical challenges in digital credential verification, asset tokenization, and decentralized application development by providing a robust, scalable infrastructure that combines the security of traditional blockchain architectures with the flexibility of modern smart contract systems. Through its comprehensive REST API and modular design, Hikmalayer enables developers and organizations to build trust-based applications with minimal complexity while maintaining enterprise-grade security standards.
 
-**Keywords:** Blockchain, Digital Certificates, Proof-of-Work, Smart Contracts, Token Management, Decentralized Verification
+**Keywords:** Blockchain, Digital Certificates, Proof-of-Stake, Proof-of-Work, Hybrid Consensus, Smart Contracts, Token Management, Decentralized Verification
 
 ---
 
@@ -38,12 +39,13 @@ Contemporary digital credential systems face several critical challenges:
 
 Hikmalayer addresses these challenges through a comprehensive blockchain platform that combines:
 
-- **Efficient Proof-of-Work Consensus**: Ensures network security while maintaining reasonable energy consumption
+- **Hybrid PoS/PoW Consensus**: PoS selects validators while PoW finalizes blocks for strong security guarantees
 - **Integrated Certificate Management**: Native support for issuing, verifying, and managing digital certificates
 - **Fungible Token System**: Built-in tokenization capabilities for reward mechanisms and economic incentives
 - **Smart Contract Framework**: Flexible contract execution environment for complex business logic
 - **Developer-Friendly API**: Comprehensive REST endpoints enabling rapid integration and development
 - **Modular Architecture**: Extensible design supporting future enhancements and customizations
+- **Operational Hardening**: Optional admin and P2P authorization tokens plus finalized-state tracking
 
 ---
 
@@ -62,7 +64,7 @@ Hikmalayer's architecture follows a layered approach that separates concerns whi
 │     (Smart Contracts, Tokens, Certificate Logic)        │
 ├─────────────────────────────────────────────────────────┤
 │                 Consensus Layer                         │
-│              (Proof-of-Work Mining)                     │
+│            (Hybrid PoS/PoW Consensus)                   │
 ├─────────────────────────────────────────────────────────┤
 │                 Blockchain Layer                        │
 │           (Blocks, Transactions, Chain Logic)           │
@@ -168,23 +170,28 @@ The REST API layer provides comprehensive access to all platform functionality t
 
 ## 3. Consensus Mechanism
 
-### 3.1 Proof-of-Work Implementation
+### 3.1 Hybrid PoS/PoW Overview
 
-Hikmalayer implements a SHA-256 based proof-of-work consensus mechanism designed to provide security while maintaining reasonable computational requirements for educational and enterprise environments.
+Hikmalayer uses a hybrid consensus model in which proof-of-stake (PoS) selects the validator and
+proof-of-work (PoW) finalizes the block. This approach preserves PoW security while introducing
+stake‑based validator selection and accountability.
 
-**Algorithm Specification:**
+**Validator Selection (PoS):**
 
-The mining algorithm follows these steps:
+1. **Stake Snapshot**: Validators register stake and are weighted by stake amount.
+2. **Deterministic Selection**: The validator is selected using a deterministic seed derived from
+   the previous block hash and the current staker set hash.
+3. **Signature Requirement**: The selected validator signs the block hash to prove authorship.
 
-1. **Input Preparation**: Combine block data including index, transactions, timestamp, and previous hash
-2. **Nonce Iteration**: Systematically try different nonce values starting from 0
-3. **Hash Computation**: Calculate SHA-256 hash of the combined input and nonce
-4. **Difficulty Check**: Verify if the hash begins with the required number of zeros
-5. **Solution Validation**: Return the successful nonce and corresponding hash
+**Block Finalization (PoW):**
+
+The validator mines the block using PoW to meet the required difficulty. PoW validation remains
+mandatory for every block and ensures cryptographic finalization.
 
 **Difficulty Mechanics:**
 
-The difficulty parameter determines the number of leading zeros required in the block hash. This creates an adjustable computational challenge that can scale with network requirements:
+The difficulty parameter determines the number of leading zeros required in the block hash. This
+creates an adjustable computational challenge that can scale with network requirements:
 
 - **Difficulty 1**: Hash must start with "0" (approximately 1 in 16 attempts)
 - **Difficulty 2**: Hash must start with "00" (approximately 1 in 256 attempts)
@@ -192,12 +199,12 @@ The difficulty parameter determines the number of leading zeros required in the 
 
 **Security Properties:**
 
-The proof-of-work system provides several critical security guarantees:
+The hybrid model provides the following guarantees:
 
-- **Immutability**: Changing historical blocks requires re-mining all subsequent blocks
-- **Consensus**: The longest valid chain represents the authoritative blockchain state
-- **Decentralization**: No single entity can control the network without majority computational power
-- **Transparency**: All mining operations and solutions are verifiable by network participants
+- **Validator Accountability**: Validators are chosen by stake and must sign blocks.
+- **Immutability**: Rewriting history requires re-mining PoW and reproducing PoS selection.
+- **Consensus**: The longest valid chain with valid PoS and PoW data is authoritative.
+- **Transparency**: Validator selection and PoW proofs are verifiable by all participants.
 
 ### 3.2 Mining Economics
 

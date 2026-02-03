@@ -59,8 +59,8 @@ pub fn select_staker(stakers: &[Staker]) -> Option<String> {
         return None;
     }
 
-    let mut rng = rand::thread_rng();
-    let selection_point = rng.gen_range(0..total_stake);
+    let mut rng = rand::rng();
+    let selection_point = rng.random_range(0..total_stake);
     let seed = format!("random-{}", selection_point);
 
     select_staker_with_seed(&seed, stakers)
@@ -68,7 +68,7 @@ pub fn select_staker(stakers: &[Staker]) -> Option<String> {
 
 pub fn sign_block_hash(block_hash: &str, private_key_hex: &str) -> Result<String, String> {
     let hash_bytes = hex::decode(block_hash).map_err(|err| err.to_string())?;
-    let message = Message::from_slice(&hash_bytes).map_err(|err| err.to_string())?;
+    let message = Message::from_digest_slice(&hash_bytes).map_err(|err| err.to_string())?;
     let secret_key_bytes = hex::decode(private_key_hex).map_err(|err| err.to_string())?;
     let secret_key = SecretKey::from_slice(&secret_key_bytes).map_err(|err| err.to_string())?;
     let secp = Secp256k1::new();
@@ -81,7 +81,7 @@ pub fn verify_block_signature(block_hash: &str, public_key_hex: &str, signature_
         Ok(bytes) => bytes,
         Err(_) => return false,
     };
-    let message = match Message::from_slice(&hash_bytes) {
+    let message = match Message::from_digest_slice(&hash_bytes) {
         Ok(msg) => msg,
         Err(_) => return false,
     };
