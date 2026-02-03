@@ -20,8 +20,12 @@ in progress to complete the production readiness checklist.
 For the official whitepaper, see `docs/Whitepaper.md`.
 
 ## Licence
-Hikmalayer is distributed under the **HikmaLayer Business Source License 1.1**. See
-[`LICENSE`](LICENSE) for full terms.
+Hikmalayer licensing is split between source code, contributions, and documentation:
+
+- **HikmaLayer Business Source License 1.1** for the protocol source code (see [`LICENSE`](LICENSE)).
+- **HikmaLayer Contributor License Agreement (CLA)** for incoming contributions (see [`CLA.md`](CLA.md)).
+- **Whitepaper** is released under **Creative Commons Attribution 4.0 International (CC BY 4.0)** to
+  allow broad redistribution with attribution.
 
 ## Development process
 Hikmalayer Core is developed in phases:

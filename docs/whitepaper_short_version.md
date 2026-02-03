@@ -1,7 +1,10 @@
 # Hikmalayer: A Blockchain Platform for Digital Certificates and Token Management
 
 **Version 1.0**  
-**August 2025**
+**August 2025**  
+**License:** Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+**Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
 
 **Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
 
@@ -13,6 +16,9 @@ Hikmalayer is a purpose-built blockchain platform designed for secure digital cr
 
 Hikmalayer is stewarded by Bestower Labs Limited and aligned with enterprise-grade governance and
 licensing requirements.
+
+This short whitepaper is distributed under CC BY 4.0 to enable sharing and citation with proper
+attribution.
 
 The platform addresses critical challenges in credential verification through blockchain immutability, smart contract automation, and comprehensive REST APIs that enable seamless integration with existing systems. Hikmalayer combines security, performance, and ease of use to create a practical solution for real-world credentialing needs.
 
@@ -49,6 +55,8 @@ Hikmalayer addresses these challenges through:
 
 Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. See the repository
 `LICENSE` file for full terms and commercial licensing options.
+
+This document is licensed under CC BY 4.0.
 
 ---
 

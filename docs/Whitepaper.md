@@ -2,7 +2,10 @@
 
 **Official Whitepaper**  
 **Version 1.0**  
-**August 2025**
+**August 2025**  
+**License:** Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+**Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
 
 **Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
 
@@ -11,6 +14,9 @@
 ## Abstract
 
 Hikmalayer represents a next-generation blockchain platform designed to address the growing demand for secure, verifiable digital credentials and efficient token-based transactions. Built on Rust's performance-oriented architecture, Hikmalayer implements a hybrid proof-of-stake validator selection model with proof-of-work block finalization, enabling seamless certificate management and fungible token operations within a unified ecosystem.
+
+This whitepaper is released under CC BY 4.0 to encourage broad distribution, translation, and
+academic citation while preserving attribution to Bestower Labs Limited and the Hikmalayer team.
 
 The platform addresses critical challenges in digital credential verification, asset tokenization, and decentralized application development by providing a robust, scalable infrastructure that combines the security of traditional blockchain architectures with the flexibility of modern smart contract systems. Through its comprehensive REST API and modular design, Hikmalayer enables developers and organizations to build trust-based applications with minimal complexity while maintaining enterprise-grade security standards.
 
@@ -251,6 +257,8 @@ Hikmalayer's smart contract system is built around the ContractExecutor, which p
 Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. Commercial deployment,
 hosting, or managed services require a separate commercial agreement with Bestower Labs Limited.
 Refer to the repository `LICENSE` file for the complete terms.
+
+This whitepaper is licensed under CC BY 4.0 to allow sharing and reuse with attribution.
 
 ### 4.2 Certificate Management Contracts
 
