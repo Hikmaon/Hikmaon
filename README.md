@@ -11,6 +11,8 @@ selection) with Proof‑of‑Work (block finalization). It provides:
 - P2P gossip and peer discovery for block propagation.
 - A React dashboard for local interaction and testing workflows.
 
+Hikmalayer is stewarded by Bestower Labs Limited.
+
 This repository is a production‑focused hybrid L1 foundation that implements the core consensus
 mechanics and operational services needed for industrial‑grade deployments. Phase 4 hardening is
 in progress to complete the production readiness checklist.
@@ -18,7 +20,8 @@ in progress to complete the production readiness checklist.
 For the official whitepaper, see `docs/Whitepaper.md`.
 
 ## Licence
-Refer to the repository’s license policy (add or update a LICENSE file as needed for distribution).
+Hikmalayer is distributed under the **HikmaLayer Business Source License 1.1**. See
+[`LICENSE`](LICENSE) for full terms.
 
 ## Development process
 Hikmalayer Core is developed in phases:
@@ -29,8 +32,8 @@ Hikmalayer Core is developed in phases:
 - **Phase 4 (upcoming)**: Production‑grade key management, hardened network authentication,
   finalized‑state tracking, and operational tooling for multi‑node deployments.
 
-Phase 3 capabilities are implemented in this repository. Phase 4 is planned and will focus on
-industrial‑scale security, operations, and scaling.
+Phase 3 capabilities are implemented in this repository. Phase 4 hardening is active and focused
+on industrial‑scale security, operations, and scaling.
 
 ## Testing
 Run the Rust test suite:

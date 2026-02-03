@@ -4,6 +4,8 @@
 **Version 1.0**  
 **August 2025**
 
+**Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
+
 ---
 
 ## Abstract
@@ -23,6 +25,9 @@ The platform addresses critical challenges in digital credential verification, a
 The digital transformation of modern organizations has created an unprecedented demand for secure, verifiable, and tamper-proof systems for managing credentials, assets, and transactions. Traditional centralized systems suffer from single points of failure, limited transparency, and vulnerability to fraud. While existing blockchain platforms provide solutions to these challenges, they often lack the specialized features required for certificate management and struggle with complexity, scalability, or integration challenges.
 
 Hikmalayer emerges as a purpose-built solution that bridges these gaps by offering a streamlined yet powerful blockchain platform specifically optimized for digital certificate management and token-based economies. The platform recognizes that modern organizations require not just a blockchain, but a complete ecosystem that can handle diverse use cases ranging from academic credentials to professional certifications and asset tokenization.
+
+Hikmalayer is stewarded by Bestower Labs Limited, which provides the operational and governance
+framework for the protocol’s evolution.
 
 ### 1.2 Problem Statement
 
@@ -105,15 +110,17 @@ Hikmalayer supports multiple transaction types to accommodate diverse use cases:
 
 #### 2.2.2 Consensus Mechanism
 
-Hikmalayer implements a proof-of-work consensus algorithm optimized for moderate computational requirements while maintaining security:
+Hikmalayer implements a hybrid PoS/PoW consensus algorithm optimized for validator accountability
+and PoW security:
 
 **Mining Process:**
 
 1. **Transaction Collection**: Gather pending transactions from the transaction pool
-2. **Block Assembly**: Create a candidate block with collected transactions
-3. **Nonce Discovery**: Find a nonce value that produces a hash meeting difficulty requirements
-4. **Block Validation**: Verify the block meets all consensus rules
-5. **Chain Integration**: Add the validated block to the blockchain
+2. **Validator Selection (PoS)**: Select the validator deterministically based on the staker set
+3. **Block Assembly**: Create a candidate block with collected transactions and validator metadata
+4. **Nonce Discovery (PoW)**: Find a nonce value that produces a hash meeting difficulty requirements
+5. **Block Validation**: Verify PoS selection, validator signature, and PoW validity
+6. **Chain Integration**: Add the validated block to the blockchain
 
 **Difficulty Adjustment:**
 The platform supports dynamic difficulty adjustment through API endpoints, allowing network administrators to balance security requirements with mining efficiency based on network conditions.
@@ -236,6 +243,14 @@ Hikmalayer's smart contract system is built around the ContractExecutor, which p
 - **State Isolation**: Contract state is managed separately from blockchain state
 - **Integration Points**: Seamless interaction between contracts, tokens, and blockchain operations
 - **Extensibility**: Modular design supports addition of new contract types
+
+---
+
+## 10. Licensing
+
+Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. Commercial deployment,
+hosting, or managed services require a separate commercial agreement with Bestower Labs Limited.
+Refer to the repository `LICENSE` file for the complete terms.
 
 ### 4.2 Certificate Management Contracts
 

@@ -34,6 +34,11 @@ Hikmalayer supports optional admin and P2P authorization headers:
 
 ## API Endpoints
 
+## License
+
+Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. See the repository
+`LICENSE` file for full terms.
+
 ### 🎓 Certificate Management
 
 #### Issue Certificate

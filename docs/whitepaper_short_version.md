@@ -3,11 +3,16 @@
 **Version 1.0**  
 **August 2025**
 
+**Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
+
 ---
 
 ## Abstract
 
 Hikmalayer is a purpose-built blockchain platform designed for secure digital credential management and token-based transactions. Built with Rust and featuring hybrid proof-of-stake validator selection with proof-of-work finalization, the platform enables educational institutions and organizations to issue tamper-proof certificates while providing integrated token economics for incentive systems.
+
+Hikmalayer is stewarded by Bestower Labs Limited and aligned with enterprise-grade governance and
+licensing requirements.
 
 The platform addresses critical challenges in credential verification through blockchain immutability, smart contract automation, and comprehensive REST APIs that enable seamless integration with existing systems. Hikmalayer combines security, performance, and ease of use to create a practical solution for real-world credentialing needs.
 
@@ -37,6 +42,13 @@ Hikmalayer addresses these challenges through:
 - **Comprehensive REST API** for easy integration
 - **Hybrid PoS/PoW consensus** ensuring validator accountability and PoW finalization
 - **Operational hardening** with optional admin/P2P authorization and finality tracking
+
+---
+
+## Licensing
+
+Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. See the repository
+`LICENSE` file for full terms and commercial licensing options.
 
 ---
 
