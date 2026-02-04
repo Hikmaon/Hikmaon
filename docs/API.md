@@ -1,8 +1,8 @@
-# HybridChain REST API Documentation
+# Hikmalayer REST API Documentation
 
 ## Overview
 
-HybridChain is a comprehensive blockchain platform featuring proof-of-work consensus, smart contracts, fungible tokens, and certificate management. This documentation provides complete API integration guidelines for developers.
+Hikmalayer is a comprehensive blockchain platform featuring proof-of-work consensus, smart contracts, fungible tokens, and certificate management. This documentation provides complete API integration guidelines for developers.
 
 **Base URL:** `http://127.0.0.1:3000`  
 **Version:** 1.0  
@@ -13,19 +13,31 @@ HybridChain is a comprehensive blockchain platform featuring proof-of-work conse
 
 ### Prerequisites
 
-- HybridChain server running on port 3000
+- Hikmalayer server running on port 3000
 - HTTP client (curl, Postman, or any REST client)
 - Basic understanding of blockchain concepts
 
+### Authorization Tokens (Optional)
+
+Hikmalayer supports optional admin and P2P authorization headers:
+
+- `ADMIN_TOKEN`: when set, governance and slashing endpoints require `x-admin-token`.
+- `P2P_TOKEN`: when set, P2P peer and block gossip endpoints require `x-p2p-token`.
+
 ### Getting Started
 
-1. Start the HybridChain server: `cargo run`
+1. Start the Hikmalayer server: `cargo run`
 2. Verify the blockchain status: `GET /blockchain/stats`
 3. Begin issuing transactions and mining blocks
 
 ---
 
 ## API Endpoints
+
+## License
+
+Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. See the repository
+`LICENSE` file for full terms.
 
 ### 🎓 Certificate Management
 
@@ -450,7 +462,7 @@ curl http://127.0.0.1:3000/tokens/balance/developer@company.com
 ### JavaScript Integration
 
 ```javascript
-class HybridChainClient {
+class HikmalayerClient {
   constructor(baseUrl = "http://127.0.0.1:3000") {
     this.baseUrl = baseUrl;
   }
@@ -485,7 +497,7 @@ class HybridChainClient {
 }
 
 // Usage
-const client = new HybridChainClient();
+const client = new HikmalayerClient();
 await client.issueCertificate("CERT001", "Alice", "Developer Certificate");
 await client.mineBlock();
 ```
@@ -496,7 +508,7 @@ await client.mineBlock();
 import requests
 import json
 
-class HybridChainClient:
+class HikmalayerClient:
     def __init__(self, base_url='http://127.0.0.1:3000'):
         self.base_url = base_url
         self.headers = {'Content-Type': 'application/json'}
@@ -532,7 +544,7 @@ class HybridChainClient:
         return response.json()
 
 # Usage
-client = HybridChainClient()
+client = HikmalayerClient()
 client.issue_certificate('CERT001', 'Alice', 'Developer Certificate')
 client.mine_block()
 ```
@@ -650,4 +662,4 @@ client.mine_block()
 
 ---
 
-**© 2025 HybridChain Platform. Built with Rust and Axum.**
+**© 2025 Hikmalayer Platform. Built with Rust and Axum.**

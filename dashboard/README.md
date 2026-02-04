@@ -1,12 +1,13 @@
-# React + Vite
+# Hikmalayer Dashboard (Phase 4)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This dashboard is the front-end entry point for Hikmalayer’s Phase 4 hardening work. It connects to
+the Hikmalayer API for mining, staking, token management, and governance workflows.
 
-Currently, two official plugins are available:
+## Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Start the backend (`cargo run`) and then the dashboard (`npm run dev`) from this folder.
 
-## Expanding the ESLint configuration
+## License
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. See the repository
+`LICENSE` file for full terms.
