@@ -1,0 +1,33 @@
+{
+  "duration_seconds": 10,
+  "tx_count": 320,
+  "tps": 31.687898335039776,
+  "avg_latency_seconds": 0.03095095232129097,
+  "finalized_height": 0,
+  "blocks_mined": 0,
+  "blocks_received": 0,
+  "docker_stats": {
+    "hikmalayer-bootnode": {
+      "cpu": "0.00%",
+      "mem": "4.277MiB / 3.451GiB"
+    },
+    "hikmalayer-validator1": {
+      "cpu": "0.00%",
+      "mem": "4.254MiB / 3.451GiB"
+    },
+    "hikmalayer-validator2": {
+      "cpu": "0.00%",
+      "mem": "4.254MiB / 3.451GiB"
+    },
+    "hikmalayer-validator3": {
+      "cpu": "0.00%",
+      "mem": "4.324MiB / 3.451GiB"
+    },
+    "hikmalayer-validator4": {
+      "cpu": "0.00%",
+      "mem": "4.242MiB / 3.451GiB"
+    }
+  },
+  "reorg_count": 0,
+  "notes": "Reorg count requires chain fork instrumentation."
+}

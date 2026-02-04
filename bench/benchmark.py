@@ -45,10 +45,11 @@ def main():
     parser.add_argument("--base-url", required=True)
     parser.add_argument("--duration", type=int, default=600)
     parser.add_argument("--rate", type=int, default=50)
-    parser.add_argument("--output", default="bench/results")
+    parser.add_argument("--output", default="bench/results/report.json")
     args = parser.parse_args()
 
-    os.makedirs(args.output, exist_ok=True)
+    import os
+    os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
     latencies = []
     tx_count = 0
@@ -70,6 +71,7 @@ def main():
             )
             latencies.append(latency)
             tx_count += 1
+
         if time.time() >= next_mine:
             try:
                 post_json(f"{args.base_url}/mine", {})
