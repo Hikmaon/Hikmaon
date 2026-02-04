@@ -6,8 +6,6 @@
 
 **Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
 
-**Author:** Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
-
 ---
 
 ## Abstract
@@ -57,6 +55,8 @@ Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. See the
 `LICENSE` file for full terms and commercial licensing options.
 
 This document is licensed under CC BY 4.0.
+
+Contributor terms are governed by the HikmaLayer CLA in `CLA.md`.
 
 ---
 

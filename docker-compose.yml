@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  bootnode:
+    build: .
+    container_name: hikmalayer-bootnode
+    environment:
+      - P2P_TOKEN=local-testnet
+      - ADMIN_TOKEN=local-admin
+      - RUST_LOG=info
+    ports:
+      - "3000:3000"
+
+  validator1:
+    build: .
+    container_name: hikmalayer-validator1
+    environment:
+      - P2P_TOKEN=local-testnet
+      - ADMIN_TOKEN=local-admin
+      - RUST_LOG=info
+    ports:
+      - "3001:3000"
+
+  validator2:
+    build: .
+    container_name: hikmalayer-validator2
+    environment:
+      - P2P_TOKEN=local-testnet
+      - ADMIN_TOKEN=local-admin
+      - RUST_LOG=info
+    ports:
+      - "3002:3000"
+
+  validator3:
+    build: .
+    container_name: hikmalayer-validator3
+    environment:
+      - P2P_TOKEN=local-testnet
+      - ADMIN_TOKEN=local-admin
+      - RUST_LOG=info
+    ports:
+      - "3003:3000"
+
+  validator4:
+    build: .
+    container_name: hikmalayer-validator4
+    environment:
+      - P2P_TOKEN=local-testnet
+      - ADMIN_TOKEN=local-admin
+      - RUST_LOG=info
+    ports:
+      - "3004:3000"
+
+  rpc:
+    build: .
+    container_name: hikmalayer-rpc
+    environment:
+      - P2P_TOKEN=local-testnet
+      - ADMIN_TOKEN=local-admin
+      - RUST_LOG=info
+    ports:
+      - "3010:3000"
+
+  json_exporter:
+    image: prometheuscommunity/json-exporter:latest
+    container_name: hikmalayer-json-exporter
+    volumes:
+      - ./ops/prometheus/json_exporter.yml:/etc/json_exporter/config.yml:ro
+    command:
+      - "--config.file=/etc/json_exporter/config.yml"
+    ports:
+      - "7979:7979"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: hikmalayer-prometheus
+    volumes:
+      - ./ops/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - json_exporter
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: hikmalayer-grafana
+    ports:
+      - "3005:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin

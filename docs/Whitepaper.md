@@ -257,14 +257,6 @@ Hikmalayer's smart contract system is built around the ContractExecutor, which p
 
 ---
 
-## 10. Licensing
-
-Hikmalayer is licensed under the HikmaLayer Business Source License 1.1. Commercial deployment,
-hosting, or managed services require a separate commercial agreement with Bestower Labs Limited.
-Refer to the repository `LICENSE` file for the complete terms.
-
-This whitepaper is licensed under CC BY 4.0 to allow sharing and reuse with attribution.
-
 ### 4.2 Certificate Management Contracts
 
 The flagship smart contract implementation focuses on digital certificate management, providing comprehensive functionality for educational institutions, professional organizations, and certification bodies.
@@ -1335,9 +1327,12 @@ As digital transformation continues accelerating across all sectors, Hikmalayer 
 - **Title**: Hikmalayer: A Multi-Purpose Blockchain Platform for Digital Certificates and Tokenized Assets
 - **Version**: 1.0
 - **Date**: August 2025
-- **Authors**: Hikmalayer Development Team
-- **License**: This whitepaper is released under Creative Commons Attribution 4.0 International License
-- **Contact**: For technical questions and collaboration opportunities, please refer to the project documentation and community channels
+- **Authors**: Mr. Muhammad Ayan Rao, Director, Bestower Labs Limited
+- **Licenses**:
+  - HikmaLayer Business Source License 1.1 (protocol source code, see `LICENSE`)
+  - HikmaLayer Contributor License Agreement (see `CLA.md`)
+  - Creative Commons Attribution 4.0 International (this whitepaper)
+- **Contact**: legal@bestowerlabs.com
 
 **Disclaimer:**
 This whitepaper is provided for informational purposes only and does not constitute financial, legal, or investment advice. The technical specifications and roadmap outlined in this document are subject to change based on development progress, community feedback, and market conditions. Readers should conduct their own research and consult appropriate professionals before making decisions based on the information contained in this document.

@@ -11,7 +11,7 @@ selection) with Proof‑of‑Work (block finalization). It provides:
 - P2P gossip and peer discovery for block propagation.
 - A React dashboard for local interaction and testing workflows.
 
-Hikmalayer is stewarded by Bestower Labs Limited.
+Hikmalayer is developed by Muhammad Ayan Rao, Founder and Director of Bestower Labs Limited.
 
 This repository is a production‑focused hybrid L1 foundation that implements the core consensus
 mechanics and operational services needed for industrial‑grade deployments. Phase 4 hardening is
@@ -100,7 +100,19 @@ hikmalayer/
 │   ├── tailwind.config.js
 │   └── vite.config.js
 ├── docs/
+│   ├── audit_readiness_pack.md
+│   ├── benchmark_report.md
+│   ├── consensus_flow.md
+│   ├── key_management.md
+│   ├── security_hardening.md
+│   ├── threat_model.md
+│   └── validator_lifecycle.md
 ├── node_modules/
+├── ops/
+│   └── README.md
+├── bench/
+│   └── benchmark.py
+├── BENCHMARKING.md
 ├── src/
 │   ├── api/
 │   │   ├── mod.rs
@@ -132,8 +144,10 @@ hikmalayer/
 ├── data/
 ├── target/
 ├── .gitignore
+├── CLA.md
 ├── Cargo.lock
 ├── Cargo.toml
+├── LICENSE
 ├── package-lock.json
 ├── package.json
 └── README.md
