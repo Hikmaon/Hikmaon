@@ -165,7 +165,10 @@ impl Blockchain {
 
         if block.previous_hash != previous.hash {
             return Ok(SlashEvidence {
-                validator: block.validator.clone().unwrap_or_else(|| "unknown".to_string()),
+                validator: block
+                    .validator
+                    .clone()
+                    .unwrap_or_else(|| "unknown".to_string()),
                 reason: "Previous hash mismatch".to_string(),
                 timestamp: Utc::now().to_rfc3339(),
             });
@@ -283,7 +286,11 @@ impl Blockchain {
 
         if let Some(genesis) = self.blocks.first() {
             if !genesis.has_valid_pow() {
-                return (false, slashed, Some("Genesis block failed PoW validation".to_string()));
+                return (
+                    false,
+                    slashed,
+                    Some("Genesis block failed PoW validation".to_string()),
+                );
             }
         }
 
@@ -292,13 +299,21 @@ impl Blockchain {
             let previous = &self.blocks[i - 1];
 
             if current.previous_hash != previous.hash {
-                return (false, slashed, Some(format!("Block {} has invalid previous hash", i)));
+                return (
+                    false,
+                    slashed,
+                    Some(format!("Block {} has invalid previous hash", i)),
+                );
             }
 
             let validator = match &current.validator {
                 Some(value) => value,
                 None => {
-                    return (false, slashed, Some(format!("Block {} missing validator", i)));
+                    return (
+                        false,
+                        slashed,
+                        Some(format!("Block {} missing validator", i)),
+                    );
                 }
             };
 
@@ -354,7 +369,10 @@ impl Blockchain {
                 return (
                     false,
                     slashed,
-                    Some(format!("Block {} validator does not match PoS selection", i)),
+                    Some(format!(
+                        "Block {} validator does not match PoS selection",
+                        i
+                    )),
                 );
             }
 
@@ -375,7 +393,11 @@ impl Blockchain {
                 if amount > 0 {
                     slashed.push((validator.clone(), amount));
                 }
-                return (false, slashed, Some(format!("Block {} failed PoW validation", i)));
+                return (
+                    false,
+                    slashed,
+                    Some(format!("Block {} failed PoW validation", i)),
+                );
             }
         }
 
@@ -399,7 +421,7 @@ pub struct SlashEvidence {
 mod tests {
     use super::*;
     use secp256k1::{PublicKey, Secp256k1, SecretKey};
-    
+
     fn test_keys() -> (String, String) {
         let secret_bytes = [1u8; 32];
         let secret_key = SecretKey::from_slice(&secret_bytes).unwrap();

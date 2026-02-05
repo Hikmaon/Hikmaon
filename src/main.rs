@@ -1,24 +1,26 @@
-mod blockchain;
-mod consensus;
-mod token;
-mod contract;
 mod api;
 mod auth;
-mod persistence;
+mod blockchain;
+mod consensus;
+mod contract;
 mod governance;
+mod p2p;
+mod persistence;
+mod token;
 
 use api::routes::{api_routes, AppState};
 use auth::{routes::auth_routes, AuthManager};
+use axum::http::Method;
 use blockchain::{chain::Blockchain, transaction::Transaction};
 use consensus::pos::Staker;
 use contract::contract::ContractExecutor;
+use p2p::service::P2PService;
 use persistence::load_state;
-use token::fungible::Token;
 use std::sync::Arc;
-use tokio::sync::Mutex;
+use token::fungible::Token;
 use tokio::net::TcpListener;
-use tower_http::cors::{CorsLayer, Any};
-use axum::http::Method;
+use tokio::sync::Mutex;
+use tower_http::cors::{Any, CorsLayer};
 
 #[tokio::main]
 async fn main() {
@@ -79,6 +81,14 @@ async fn main() {
     let p2p_token = std::env::var("P2P_TOKEN").ok();
     let admin_token = std::env::var("ADMIN_TOKEN").ok();
 
+    let p2p_service = Arc::new(
+        P2PService::new(
+            std::env::var("NODE_ID").unwrap_or_else(|_| "node-local".to_string()),
+            p2p_token.clone(),
+        )
+        .unwrap_or_else(|err| panic!("{}", err)),
+    );
+
     let finality_depth = {
         let governance = governance.lock().await;
         governance.finality_depth
@@ -101,12 +111,23 @@ async fn main() {
         metrics,
         p2p_token,
         admin_token,
+        p2p_service,
     };
 
     // Configure CORS to allow React app on localhost:5173
     let cors = CorsLayer::new()
-        .allow_origin("http://localhost:5173".parse::<axum::http::HeaderValue>().unwrap())
-        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::DELETE, Method::OPTIONS])
+        .allow_origin(
+            "http://localhost:5173"
+                .parse::<axum::http::HeaderValue>()
+                .unwrap(),
+        )
+        .allow_methods([
+            Method::GET,
+            Method::POST,
+            Method::PUT,
+            Method::DELETE,
+            Method::OPTIONS,
+        ])
         .allow_headers(Any)
         .allow_credentials(false);
 
@@ -121,7 +142,7 @@ async fn main() {
     println!("📋 Available endpoints:");
     println!("  🔐 AUTHENTICATION:");
     println!("      🎫 POST /auth/nonce");
-    println!("      ✅ POST /auth/verify");  
+    println!("      ✅ POST /auth/verify");
     println!("      🚪 DELETE /auth/logout");
     println!("  🎓 CERTIFICATES:");
     println!("      📜 POST /certificates/issue");
@@ -149,7 +170,7 @@ async fn main() {
     println!("      ⏳ GET  /transactions/pending");
     println!("");
     println!("🌟 Complete blockchain with wallet authentication & smart contracts!");
-    
+
     let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
 
     axum::serve(listener, app).await.unwrap();

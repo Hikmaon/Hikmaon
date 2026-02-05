@@ -1,7 +1,7 @@
 use rand::Rng;
+use secp256k1::{ecdsa::Signature, Message, PublicKey, Secp256k1, SecretKey};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use secp256k1::{ecdsa::Signature, Message, PublicKey, Secp256k1, SecretKey};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Staker {
@@ -109,11 +109,7 @@ pub fn slash_staker(stakers: &mut Vec<Staker>, address: &str) -> u64 {
     slash_staker_with_percent(stakers, address, SLASH_PERCENT)
 }
 
-pub fn slash_staker_with_percent(
-    stakers: &mut Vec<Staker>,
-    address: &str,
-    percent: u64,
-) -> u64 {
+pub fn slash_staker_with_percent(stakers: &mut Vec<Staker>, address: &str, percent: u64) -> u64 {
     for staker in stakers.iter_mut() {
         if staker.address == address {
             let slashed = staker.stake.saturating_mul(percent) / 100;
