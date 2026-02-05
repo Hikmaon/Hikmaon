@@ -1,5 +1,5 @@
 use axum::{
-    extract::{State, Path},
+    extract::{Path, State},
     http::HeaderMap,
     response::Json,
     routing::{get, post},
@@ -19,6 +19,10 @@ use crate::{
     consensus::pos::{self, Staker},
     contract::contract::ContractExecutor,
     governance::GovernanceConfig,
+    p2p::{
+        protocol::{P2PEnvelope, P2PPayload},
+        service::P2PService,
+    },
     persistence::{save_state, AppSnapshot},
     token::fungible::Token,
 };
@@ -39,6 +43,7 @@ pub struct AppState {
     pub metrics: Arc<Mutex<Metrics>>,
     pub p2p_token: Option<String>,
     pub admin_token: Option<String>,
+    pub p2p_service: Arc<P2PService>,
 }
 
 #[derive(Deserialize)]
@@ -175,6 +180,8 @@ pub struct Metrics {
     pub slashes_submitted: u64,
     pub gossip_sent: u64,
     pub gossip_failed: u64,
+    pub protocol_messages_received: u64,
+    pub protocol_messages_rejected: u64,
 }
 
 async fn persist_state(state: &AppState) -> Result<(), String> {
@@ -217,17 +224,22 @@ async fn gossip_blocks(state: &AppState, blocks: Vec<Block>) -> Result<(), Strin
         peers.clone()
     };
 
-    let client = reqwest::Client::new();
-    for peer in targets {
-        let url = format!("{}/p2p/blocks", peer.trim_end_matches('/'));
-        let response = client.post(url).json(&blocks).send().await;
-        let mut metrics = state.metrics.lock().await;
-        if response.is_err() {
-            metrics.gossip_failed += 1;
-        } else {
-            metrics.gossip_sent += 1;
-        }
+    let mut sent = 0u64;
+    let mut failed = 0u64;
+
+    for block in blocks {
+        let (ok, err) = state
+            .p2p_service
+            .broadcast_block(targets.clone(), block)
+            .await;
+        sent += ok;
+        failed += err;
     }
+
+    let mut metrics = state.metrics.lock().await;
+    metrics.gossip_sent += sent;
+    metrics.gossip_failed += failed;
+
     Ok(())
 }
 
@@ -256,53 +268,48 @@ pub fn api_routes() -> Router<AppState> {
         // Certificate routes
         .route("/certificates/issue", post(issue_certificate))
         .route("/certificates/verify", post(verify_certificate))
-        
         // Token routes
         .route("/tokens/transfer", post(transfer_tokens))
         .route("/tokens/balance/{account}", get(get_token_balance))
-        
         // Blockchain routes
         .route("/blocks", get(get_blocks))
         .route("/blocks/{index}", get(get_block_by_index))
         .route("/blockchain/stats", get(get_blockchain_stats))
-        
         // Mining routes
         .route("/mine", post(mine_block))
         .route("/mining/difficulty", get(get_mining_difficulty))
         .route("/mining/difficulty", post(set_mining_difficulty))
-        
         // Validation routes
         .route("/blockchain/validate", get(validate_blockchain))
         .route("/blocks/{index}/validate", get(validate_block))
         .route("/validate", get(validate_chain)) // Tutorial compatibility
-        
         // Transaction routes
         .route("/transactions/pending", get(get_pending_transactions))
-
         // Staking routes
         .route("/staking/deposit", post(stake_tokens))
         .route("/staking/withdraw", post(withdraw_stake))
         .route("/staking/validators", get(list_validators))
-
         // P2P routes
         .route("/p2p/peers", get(list_peers))
         .route("/p2p/peers/register", post(register_peer))
         .route("/p2p/block", post(receive_block))
         .route("/p2p/blocks", post(receive_blocks))
-
+        .route("/p2p/protocol", post(receive_protocol_message))
         // Governance & slashing routes
         .route("/governance/config", get(get_governance))
         .route("/governance/config", post(update_governance))
         .route("/slashing/evidence", post(submit_slash_evidence))
         .route("/slashing/evidence", get(list_slash_evidence))
-
         // Metrics
         .route("/metrics", get(get_metrics))
 }
 
 // ===== CERTIFICATE ENDPOINTS =====
 
-async fn issue_certificate(State(state): State<AppState>, Json(payload): Json<CertificateRequest>) -> Json<ApiResponse> {
+async fn issue_certificate(
+    State(state): State<AppState>,
+    Json(payload): Json<CertificateRequest>,
+) -> Json<ApiResponse> {
     // Update contract state
     let mut contracts = state.contracts.lock().await;
     contracts.issue_certificate(&payload.id, &payload.issued_to, &payload.description);
@@ -325,11 +332,17 @@ async fn issue_certificate(State(state): State<AppState>, Json(payload): Json<Ce
 
     Json(ApiResponse {
         status: "success".to_string(),
-        message: format!("Certificate {} issued to {} and added to pending transactions", payload.id, payload.issued_to),
+        message: format!(
+            "Certificate {} issued to {} and added to pending transactions",
+            payload.id, payload.issued_to
+        ),
     })
 }
 
-async fn verify_certificate(State(state): State<AppState>, Json(payload): Json<VerifyCertificateRequest>) -> Json<ApiResponse> {
+async fn verify_certificate(
+    State(state): State<AppState>,
+    Json(payload): Json<VerifyCertificateRequest>,
+) -> Json<ApiResponse> {
     let mut contracts = state.contracts.lock().await;
     let success = contracts.verify_certificate(&payload.id);
 
@@ -347,7 +360,10 @@ async fn verify_certificate(State(state): State<AppState>, Json(payload): Json<V
 
 // ===== TOKEN ENDPOINTS =====
 
-async fn transfer_tokens(State(state): State<AppState>, Json(payload): Json<TokenTransferRequest>) -> Json<ApiResponse> {
+async fn transfer_tokens(
+    State(state): State<AppState>,
+    Json(payload): Json<TokenTransferRequest>,
+) -> Json<ApiResponse> {
     // Update token balances
     let mut token = state.token.lock().await;
     let success = token.transfer(&payload.from, &payload.to, payload.amount);
@@ -371,24 +387,30 @@ async fn transfer_tokens(State(state): State<AppState>, Json(payload): Json<Toke
 
         Json(ApiResponse {
             status: "success".to_string(),
-            message: format!("Transferred {} tokens from {} to {} and added to blockchain", payload.amount, payload.from, payload.to),
+            message: format!(
+                "Transferred {} tokens from {} to {} and added to blockchain",
+                payload.amount, payload.from, payload.to
+            ),
         })
     } else {
         Json(ApiResponse {
             status: "error".to_string(),
-            message: format!("Failed to transfer tokens from {} to {}", payload.from, payload.to),
+            message: format!(
+                "Failed to transfer tokens from {} to {}",
+                payload.from, payload.to
+            ),
         })
     }
 }
 
-async fn get_token_balance(State(state): State<AppState>, Path(account): Path<String>) -> Json<BalanceResponse> {
+async fn get_token_balance(
+    State(state): State<AppState>,
+    Path(account): Path<String>,
+) -> Json<BalanceResponse> {
     let token = state.token.lock().await;
     let balance = token.balance_of(&account);
-    
-    Json(BalanceResponse {
-        account,
-        balance,
-    })
+
+    Json(BalanceResponse { account, balance })
 }
 
 // ===== BLOCKCHAIN ENDPOINTS =====
@@ -399,9 +421,12 @@ async fn get_blocks(State(state): State<AppState>) -> Json<Vec<String>> {
     Json(block_data)
 }
 
-async fn get_block_by_index(State(state): State<AppState>, Path(index): Path<usize>) -> Json<Option<String>> {
+async fn get_block_by_index(
+    State(state): State<AppState>,
+    Path(index): Path<usize>,
+) -> Json<Option<String>> {
     let chain = state.chain.lock().await;
-    
+
     if index < chain.blocks.len() {
         Json(Some(format!("{:?}", chain.blocks[index])))
     } else {
@@ -413,7 +438,7 @@ async fn get_blockchain_stats(State(state): State<AppState>) -> Json<BlockchainS
     let chain = state.chain.lock().await;
     let pending = state.pending_transactions.lock().await;
     let governance = state.governance.lock().await;
-    
+
     Json(BlockchainStats {
         total_blocks: chain.blocks.len(),
         pending_transactions: pending.len(),
@@ -435,11 +460,11 @@ async fn mine_block(State(state): State<AppState>) -> Json<MiningResponse> {
     let mut pending = state.pending_transactions.lock().await;
     let mut chain = state.chain.lock().await;
     let stakers = state.stakers.lock().await;
-    
+
     // Since genesis block is auto-created, we only need to check for pending transactions
     // Allow mining if there are pending transactions OR if there's only the genesis block
     let has_only_genesis = chain.blocks.len() == 1;
-    
+
     if pending.is_empty() && !has_only_genesis {
         drop(chain);
         drop(pending);
@@ -532,12 +557,9 @@ async fn mine_block(State(state): State<AppState>) -> Json<MiningResponse> {
         transactions_count = transaction_strings.len();
     } else {
         // Convert pending transactions to strings for the block
-        transaction_strings = pending
-            .iter()
-            .map(|tx| format!("{:?}", tx))
-            .collect();
+        transaction_strings = pending.iter().map(|tx| format!("{:?}", tx)).collect();
         transactions_count = transaction_strings.len();
-        
+
         // Clear pending transactions after copying them
         pending.clear();
     }
@@ -568,7 +590,7 @@ async fn mine_block(State(state): State<AppState>) -> Json<MiningResponse> {
     chain.apply_finality(finality_depth);
     let block_index = chain.blocks.len() as u64 - 1;
     let block_to_gossip = chain.blocks.last().cloned();
-    
+
     // Release locks
     drop(chain);
     drop(pending);
@@ -611,22 +633,31 @@ async fn get_mining_difficulty(State(state): State<AppState>) -> Json<Difficulty
     })
 }
 
-async fn set_mining_difficulty(State(state): State<AppState>, Json(payload): Json<DifficultyRequest>) -> Json<ApiResponse> {
+async fn set_mining_difficulty(
+    State(state): State<AppState>,
+    Json(payload): Json<DifficultyRequest>,
+) -> Json<ApiResponse> {
     let mut chain = state.chain.lock().await;
     let old_difficulty = chain.difficulty;
     chain.difficulty = payload.difficulty;
-    
+
     let _ = persist_state(&state).await;
 
     Json(ApiResponse {
         status: "success".to_string(),
-        message: format!("Mining difficulty changed from {} to {}", old_difficulty, payload.difficulty),
+        message: format!(
+            "Mining difficulty changed from {} to {}",
+            old_difficulty, payload.difficulty
+        ),
     })
 }
 
 // ===== STAKING ENDPOINTS =====
 
-async fn stake_tokens(State(state): State<AppState>, Json(payload): Json<StakeRequest>) -> Json<StakeResponse> {
+async fn stake_tokens(
+    State(state): State<AppState>,
+    Json(payload): Json<StakeRequest>,
+) -> Json<StakeResponse> {
     if payload.amount == 0 {
         return Json(StakeResponse {
             status: "error".to_string(),
@@ -763,7 +794,10 @@ async fn withdraw_stake(
 
     Json(StakeResponse {
         status: "success".to_string(),
-        message: format!("Withdrew {} staked tokens for {}", payload.amount, payload.address),
+        message: format!(
+            "Withdrew {} staked tokens for {}",
+            payload.amount, payload.address
+        ),
         total_stake: updated_total,
     })
 }
@@ -783,10 +817,7 @@ async fn list_validators(State(state): State<AppState>) -> Json<Vec<ValidatorInf
 
 // ===== P2P ENDPOINTS =====
 
-async fn list_peers(
-    State(state): State<AppState>,
-    headers: HeaderMap,
-) -> Json<Vec<String>> {
+async fn list_peers(State(state): State<AppState>, headers: HeaderMap) -> Json<Vec<String>> {
     if !authorize_p2p(&headers, &state) {
         return Json(Vec::new());
     }
@@ -905,6 +936,122 @@ async fn receive_blocks(
         status: "success".to_string(),
         message: format!("Accepted {} blocks", accepted),
     })
+}
+
+async fn receive_protocol_message(
+    State(state): State<AppState>,
+    headers: HeaderMap,
+    Json(envelope): Json<P2PEnvelope>,
+) -> Json<ApiResponse> {
+    if !authorize_p2p(&headers, &state) {
+        let mut metrics = state.metrics.lock().await;
+        metrics.protocol_messages_rejected += 1;
+        return Json(ApiResponse {
+            status: "error".to_string(),
+            message: "Unauthorized peer request".to_string(),
+        });
+    }
+
+    if let Err(message) = envelope.validate(300) {
+        let mut metrics = state.metrics.lock().await;
+        metrics.protocol_messages_rejected += 1;
+        return Json(ApiResponse {
+            status: "error".to_string(),
+            message,
+        });
+    }
+
+    {
+        let mut metrics = state.metrics.lock().await;
+        metrics.protocol_messages_received += 1;
+    }
+
+    match envelope.payload {
+        P2PPayload::Ping => Json(ApiResponse {
+            status: "success".to_string(),
+            message: "pong".to_string(),
+        }),
+        P2PPayload::PeerAnnounce { address } => {
+            if address.trim().is_empty() {
+                let mut metrics = state.metrics.lock().await;
+                metrics.protocol_messages_rejected += 1;
+                return Json(ApiResponse {
+                    status: "error".to_string(),
+                    message: "Peer address cannot be empty".to_string(),
+                });
+            }
+
+            let mut peers = state.peers.lock().await;
+            if !peers.contains(&address) {
+                peers.push(address.clone());
+                let mut metrics = state.metrics.lock().await;
+                metrics.peers_registered += 1;
+            }
+            drop(peers);
+            let _ = persist_state(&state).await;
+
+            Json(ApiResponse {
+                status: "success".to_string(),
+                message: format!("Registered peer {}", address),
+            })
+        }
+        P2PPayload::Block(block) => {
+            let finality_depth = {
+                let governance = state.governance.lock().await;
+                governance.finality_depth
+            };
+            let mut chain = state.chain.lock().await;
+            if let Err(message) = chain.validate_block_candidate(&block) {
+                let mut metrics = state.metrics.lock().await;
+                metrics.protocol_messages_rejected += 1;
+                return Json(ApiResponse {
+                    status: "error".to_string(),
+                    message,
+                });
+            }
+            chain.add_mined_block(block);
+            chain.apply_finality(finality_depth);
+            drop(chain);
+            let mut metrics = state.metrics.lock().await;
+            metrics.blocks_received += 1;
+            drop(metrics);
+            let _ = persist_state(&state).await;
+            Json(ApiResponse {
+                status: "success".to_string(),
+                message: "Block accepted".to_string(),
+            })
+        }
+        P2PPayload::BlockBatch(blocks) => {
+            let finality_depth = {
+                let governance = state.governance.lock().await;
+                governance.finality_depth
+            };
+            let mut chain = state.chain.lock().await;
+            let mut accepted = 0u64;
+            for block in blocks {
+                if chain.validate_block_candidate(&block).is_ok() {
+                    chain.add_mined_block(block);
+                    accepted += 1;
+                } else {
+                    break;
+                }
+            }
+            if accepted > 0 {
+                chain.apply_finality(finality_depth);
+            }
+            drop(chain);
+            if accepted > 0 {
+                let mut metrics = state.metrics.lock().await;
+                metrics.blocks_received += accepted;
+                drop(metrics);
+                let _ = persist_state(&state).await;
+            }
+            Json(ApiResponse {
+                status: "success".to_string(),
+                message: format!("Accepted {} blocks", accepted),
+            })
+        }
+    }
 }
 
 // ===== GOVERNANCE & SLASHING ENDPOINTS =====
@@ -1058,10 +1205,13 @@ async fn validate_blockchain(State(state): State<AppState>) -> Json<ValidationRe
     })
 }
 
-async fn validate_block(State(state): State<AppState>, Path(index): Path<usize>) -> Json<ValidationResponse> {
+async fn validate_block(
+    State(state): State<AppState>,
+    Path(index): Path<usize>,
+) -> Json<ValidationResponse> {
     let chain = state.chain.lock().await;
     let mut stakers = state.stakers.lock().await;
-    
+
     if index >= chain.blocks.len() {
         return Json(ValidationResponse {
             is_valid: false,
@@ -1146,7 +1296,7 @@ async fn validate_block(State(state): State<AppState>, Path(index): Path<usize>)
     }
 
     let is_valid = error.is_none();
-    
+
     drop(stakers);
     let _ = persist_state(&state).await;
 
@@ -1157,7 +1307,11 @@ async fn validate_block(State(state): State<AppState>, Path(index): Path<usize>)
         } else {
             format!("Block {} validation failed", index)
         },
-        details: if is_valid { Some("Block is valid".to_string()) } else { error },
+        details: if is_valid {
+            Some("Block is valid".to_string())
+        } else {
+            error
+        },
         slashed,
     })
 }
@@ -1181,9 +1335,6 @@ async fn validate_chain(State(state): State<AppState>) -> Json<ApiResponse> {
 
 async fn get_pending_transactions(State(state): State<AppState>) -> Json<Vec<String>> {
     let pending = state.pending_transactions.lock().await;
-    let transaction_strings: Vec<String> = pending
-        .iter()
-        .map(|tx| format!("{:?}", tx))
-        .collect();
+    let transaction_strings: Vec<String> = pending.iter().map(|tx| format!("{:?}", tx)).collect();
     Json(transaction_strings)
 }

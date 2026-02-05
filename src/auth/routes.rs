@@ -1,15 +1,15 @@
 // src/auth/routes.rs
 use axum::{
     extract::State,
-    response::Json,
-    routing::{post, delete},
-    Router,
     http::StatusCode,
+    response::Json,
+    routing::{delete, post},
+    Router,
 };
 
 use super::{
-    AuthResponse, NonceRequest, NonceResponse, VerifyRequest, VerifyResponse,
-    signature::recover_address_from_signature,
+    signature::recover_address_from_signature, AuthResponse, NonceRequest, NonceResponse,
+    VerifyRequest, VerifyResponse,
 };
 
 pub fn auth_routes() -> Router<crate::api::routes::AppState> {
@@ -25,7 +25,7 @@ async fn generate_nonce(
 ) -> Result<Json<NonceResponse>, StatusCode> {
     let mut auth_manager = state.auth_manager.lock().await;
     let nonce = auth_manager.generate_nonce(&payload.address);
-    
+
     Ok(Json(NonceResponse { nonce }))
 }
 
@@ -34,12 +34,12 @@ async fn verify_signature(
     Json(payload): Json<VerifyRequest>,
 ) -> Result<Json<VerifyResponse>, StatusCode> {
     let mut auth_manager = state.auth_manager.lock().await;
-    
+
     // Verify the nonce
     if !auth_manager.verify_nonce(&payload.address, &payload.nonce) {
         return Err(StatusCode::BAD_REQUEST);
     }
-    
+
     // Verify the signature
     match recover_address_from_signature(&payload.message, &payload.signature) {
         Ok(recovered_address) => {
@@ -47,7 +47,7 @@ async fn verify_signature(
             if recovered_address.to_lowercase() == payload.address.to_lowercase() {
                 // Create session token
                 let token = auth_manager.create_session(&payload.address);
-                
+
                 Ok(Json(VerifyResponse {
                     token,
                     address: payload.address,
@@ -60,9 +60,7 @@ async fn verify_signature(
     }
 }
 
-async fn logout(
-    State(_state): State<crate::api::routes::AppState>,
-) -> Json<AuthResponse> {
+async fn logout(State(_state): State<crate::api::routes::AppState>) -> Json<AuthResponse> {
     // In a full implementation, you'd get the token from the Authorization header
     // and revoke it. For now, just return success.
     Json(AuthResponse {

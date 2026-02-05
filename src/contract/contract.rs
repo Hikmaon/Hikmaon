@@ -54,7 +54,10 @@ impl ContractExecutor {
         if let Some(cert) = self.certificates.get(cert_id) {
             if cert.verified {
                 token.mint(&cert.issued_to, amount);
-                println!("Rewarded {} {} tokens for certificate {}", cert.issued_to, amount, cert_id);
+                println!(
+                    "Rewarded {} {} tokens for certificate {}",
+                    cert.issued_to, amount, cert_id
+                );
                 return true;
             } else {
                 println!("Certificate {} is not verified yet.", cert_id);

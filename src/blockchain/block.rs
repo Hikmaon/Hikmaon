@@ -18,7 +18,6 @@ pub struct Block {
     pub staker_snapshot: Option<Vec<crate::consensus::pos::Staker>>,
 }
 
-
 use crate::consensus::pow;
 
 impl Block {
@@ -100,8 +99,7 @@ impl Block {
     }
 
     pub fn has_valid_pow(&self) -> bool {
-        self.hash == self.calculate_hash()
-            && self.hash.starts_with(&"0".repeat(self.difficulty))
+        self.hash == self.calculate_hash() && self.hash.starts_with(&"0".repeat(self.difficulty))
     }
 }
 

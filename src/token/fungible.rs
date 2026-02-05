@@ -33,17 +33,22 @@ impl Token {
             return false;
         }
 
-        self.balances.insert(from.to_string(), from_balance - amount);
+        self.balances
+            .insert(from.to_string(), from_balance - amount);
         let to_balance = self.balance_of(to);
         self.balances.insert(to.to_string(), to_balance + amount);
 
-        println!("Transferred {} {} from {} to {}", amount, self.symbol, from, to);
+        println!(
+            "Transferred {} {} from {} to {}",
+            amount, self.symbol, from, to
+        );
         true
     }
 
     pub fn mint(&mut self, to: &str, amount: u64) {
         let current_balance = self.balance_of(to);
-        self.balances.insert(to.to_string(), current_balance + amount);
+        self.balances
+            .insert(to.to_string(), current_balance + amount);
         self.total_supply += amount;
 
         println!("Minted {} {} to {}", amount, self.symbol, to);

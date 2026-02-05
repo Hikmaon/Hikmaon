@@ -236,88 +236,59 @@ Phase-4 benchmarks demonstrate a stable execution foundation suitable for distri
 ## Project directory
 ```
 hikmalayer/
+├── bench/
+│   ├── benchmark.py
+│   └── results/
+│       ├── run_10min/
+│       └── test_run/
 ├── dashboard/
-│   ├── node_modules/
 │   ├── public/
 │   ├── src/
 │   │   ├── assets/
-│   │   │   └── react.svg
 │   │   ├── components/
-│   │   │   ├── BlockchainViewer.jsx
-│   │   │   ├── CertificateManager.jsx
-│   │   │   ├── MiningActions.jsx
-│   │   │   ├── ProtectedAction.jsx
-│   │   │   ├── StatsGrid.jsx
-│   │   │   ├── TokenManager.jsx
-│   │   │   ├── WalletAuth.css
-│   │   │   └── WalletAuth.jsx
-│   │   ├── hooks/
-│   │   │   ├── useAuthenticatedApi.js
-│   │   │   └── useWallet.jsx
-│   │   ├── api.js
-│   │   ├── App.css
-│   │   ├── App.jsx
-│   │   ├── index.css
-│   │   └── main.jsx
-│   ├── .gitignore
-│   ├── eslint.config.js
+│   │   └── hooks/
 │   ├── index.html
-│   ├── package-lock.json
 │   ├── package.json
-│   ├── postcss.config.js
-│   ├── README.md
-│   ├── tailwind.config.js
 │   └── vite.config.js
 ├── docs/
+│   ├── API.md
+│   ├── Whitepaper.md
 │   ├── audit_readiness_pack.md
 │   ├── benchmark_report.md
 │   ├── consensus_flow.md
 │   ├── key_management.md
+│   ├── repo_readme_audit.md
+│   ├── repository_code_audit.md
 │   ├── security_hardening.md
 │   ├── threat_model.md
-│   └── validator_lifecycle.md
-├── node_modules/
+│   ├── validator_lifecycle.md
+│   └── whitepaper_short_version.md
 ├── ops/
-│   └── README.md
-├── bench/
-│   └── benchmark.py
-├── BENCHMARKING.md
+│   ├── prometheus/
+│   ├── README.md
+│   ├── reset_chain.sh
+│   ├── run_benchmark.sh
+│   ├── start_testnet.sh
+│   └── stop_testnet.sh
 ├── src/
 │   ├── api/
-│   │   ├── mod.rs
-│   │   └── routes.rs
 │   ├── auth/
-│   │   ├── middleware.rs
-│   │   ├── mod.rs
-│   │   ├── routes.rs
-│   │   └── signature.rs
 │   ├── blockchain/
-│   │   ├── block.rs
-│   │   ├── chain.rs
-│   │   ├── mod.rs
-│   │   └── transaction.rs
 │   ├── consensus/
-│   │   ├── mod.rs
-│   │   ├── pos.rs
-│   │   └── pow.rs
 │   ├── contract/
-│   │   ├── contract.rs
-│   │   └── mod.rs
-│   ├── governance.rs
-│   ├── persistence.rs
+│   ├── p2p/
+│   │   ├── mod.rs
+│   │   ├── protocol.rs
+│   │   └── service.rs
 │   ├── token/
-│   │   ├── fungible.rs
-│   │   └── mod.rs
-│   ├── utils/
-│   └── main.rs
-├── data/
-├── target/
-├── .gitignore
+│   ├── governance.rs
+│   ├── main.rs
+│   └── persistence.rs
+├── BENCHMARKING.md
 ├── CLA.md
-├── Cargo.lock
 ├── Cargo.toml
+├── Dockerfile
 ├── LICENSE
-├── package-lock.json
-├── package.json
-└── README.md
+├── README.md
+└── docker-compose.yml
 ```

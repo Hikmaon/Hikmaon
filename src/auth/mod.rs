@@ -26,7 +26,9 @@ impl AuthManager {
     }
 
     pub fn verify_nonce(&self, address: &str, nonce: &str) -> bool {
-        self.nonces.get(address).map_or(false, |stored_nonce| stored_nonce == nonce)
+        self.nonces
+            .get(address)
+            .map_or(false, |stored_nonce| stored_nonce == nonce)
     }
 
     pub fn create_session(&mut self, address: &str) -> String {

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Hikmalayer is a comprehensive blockchain platform featuring proof-of-work consensus, smart contracts, fungible tokens, and certificate management. This documentation provides complete API integration guidelines for developers.
+Hikmalayer is a hybrid PoS/PoW blockchain platform with REST execution APIs, staking, governance/slashing controls, and a dedicated P2P protocol endpoint for inter-node communication. This documentation provides API integration guidelines for operators and developers.
 
 **Base URL:** `http://127.0.0.1:3000`  
 **Version:** 1.0  
@@ -33,6 +33,41 @@ Hikmalayer supports optional admin and P2P authorization headers:
 ---
 
 ## API Endpoints
+
+### 🌐 P2P Protocol (Phase-4)
+
+#### Receive Protocol Envelope
+
+Dedicated inter-node protocol endpoint for envelope-based messages (`Ping`, `PeerAnnounce`, `Block`, `BlockBatch`).
+
+**Endpoint:** `POST /p2p/protocol`
+
+**Headers:**
+- `Content-Type: application/json`
+- `x-p2p-token: <token>` (required when `P2P_TOKEN` is configured)
+
+**Request Body (example):**
+
+```json
+{
+  "protocol_version": "hikmalayer-p2p/1",
+  "node_id": "validator-1",
+  "message_id": "uuid",
+  "timestamp": "2026-01-01T00:00:00Z",
+  "payload": {
+    "type": "Ping"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "status": "success|error",
+  "message": "pong|..."
+}
+```
 
 ## License
 
@@ -236,7 +271,9 @@ Provides comprehensive blockchain metrics and health status.
   "pending_transactions": number,
   "difficulty": number,
   "is_valid": boolean,
-  "latest_hash": "string"
+  "latest_hash": "string",
+  "finalized_height": number,
+  "finality_depth": number
 }
 ```
 
